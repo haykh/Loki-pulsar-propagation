@@ -1,0 +1,26 @@
+# Folders #
+bin/data/
+
+# DAT files #
+*.dat
+
+# Images #
+*.eps
+*.png
+
+# Python
+*.py
+*.pyc
+*.ipynb
+
+# Executables #
+*.o
+
+# Archives #
+*.zip
+*.gz
+
+# mac OS files #
+.DS_Store
+.ipynb*/
+
