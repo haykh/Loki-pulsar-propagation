@@ -17,7 +17,7 @@ Theoretical basis for the program is given in the following papers <sup>[1](#myf
 * The input file name is specified with a flag when running the code `./loki -i loki.input`.
 * Output path is specified with the `-o` flag, default value is "output/".
 
-> Example run:
+#### Example run:
 ```
 $ make all
 $ cd bin
