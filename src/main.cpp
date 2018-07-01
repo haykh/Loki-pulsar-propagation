@@ -34,7 +34,7 @@ void displayVector (vector <double> a) {
 
 int main(int argc, char* argv[]) {
   // Reading flags >
-  string input_name, path;
+  string input_name, path = "output";
   bool found_input = false;
   for (int i=0; i<argc; ++i) {
 		if (typeid(argv[i]) == typeid(char*)) {
@@ -45,6 +45,14 @@ int main(int argc, char* argv[]) {
         }
 				else {
           throw_error("ERROR: No input file given.");
+				}
+			}
+      if (strncmp(argv[i], "-o", 3) == 0) {
+				if (i+1 < argc) {
+					path = argv[i+1];
+        }
+				else {
+          throw_error("ERROR: No output path given.");
 				}
 			}
 		}

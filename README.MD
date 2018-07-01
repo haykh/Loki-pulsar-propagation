@@ -12,11 +12,17 @@ Theoretical basis for the program is given in the following papers <sup>[1](#myf
 * `constants.h` is to store all the necessary constants within the `constants::` namespace.
 
 ### Running
+* Compile with `make all` in the root directory, the executable is generated in the `bin/` directory.
 * The input parameters are passed with the `loki.input` file, from the same directory as the executable file.
-* The compilation is done with `make all` in the root directory. The compiled file is being generated in the `/bin` directory.
-* The input file name is specified with a call flag `./loki -i loki.input`.
+* The input file name is specified with a flag when running the code `./loki -i loki.input`.
+* Output path is specified with the `-o` flag, default value is "output/".
 
-`.gitignore` file contains all the extensions and folders that we don't want to share to github, such as executables, images, outputs, python files, etc.
+> Example run:
+```
+$ make all
+$ cd bin
+$ ./loki -i loki.input -o my_output
+```
 
 ### Things to do
 - Write density routine for any given ___B___-field.
