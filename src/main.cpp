@@ -122,59 +122,59 @@ int main(int argc, char* argv[]) {
   double phi_t_end = read_from_file(input_name, "phi_end");
   double phi_t_step = read_from_file(input_name, "phi_step");
   for (double phi_t = phi_t_start; phi_t <= phi_t_end; phi_t += phi_t_step) { // Phase switch
-      cout << "PHI: " << phi_t << endl;
-      Globals::PHI0 = phi_t * constants::PI / 180.0;
-      findInitPoints (Globals::PHI0);
+    cout << "PHI: " << phi_t << endl;
+    Globals::PHI0 = phi_t * constants::PI / 180.0;
+    findInitPoints (Globals::PHI0);
 
-      double x1, x2, dep_vars[2];
-      x1 = 0.0;
-      // if (RESCAPE < 1000.0) x2 = 1500.0;
-      x2 = 1.5 * Globals::RESCAPE;
+    double x1, x2, dep_vars[2];
+    x1 = 0.0;
+    // if (RESCAPE < 1000.0) x2 = 1500.0;
+    x2 = 1.5 * Globals::RESCAPE;
 
-      //freeM();
-      r_perpFromR (x1, x2);
-     // PlotRperp ();
+    //freeM();
+    r_perpFromR (x1, x2);
+   // PlotRperp ();
 
-      /*string name1 = "theory_r_perp";
-  	ofstream output2(out_path + name1 + ".dat");
-  	double RR = x2;
-  	while(x1 < RR){
-  		output2 << RR << " " << psi_m(RR)/sqrt(NORM(vR(RR)))<< endl;
-  		RR = RR - 100.0;
-  	}
-  	output2.close();
-      //cout << "r_perp for initial point from dipol: " << psi_m(x2)/sqrt(NORM(vR(x2))) << "\n" << endl;*/
+    /*string name1 = "theory_r_perp";
+	   ofstream output2(out_path + name1 + ".dat");
+	    double RR = x2;
+	     while(x1 < RR){
+		     output2 << RR << " " << psi_m(RR)/sqrt(NORM(vR(RR)))<< endl;
+		       RR = RR - 100.0;
+	        }
+	         output2.close();
+           //cout << "r_perp for initial point from dipol: " << psi_m(x2)/sqrt(NORM(vR(x2))) << "\n" << endl;*/
 
-      /*Initial values*/
-      if (Globals::mode == 0) { // X-mode
-          dep_vars[0] = BetaB(x1) + delta(x1) + constants::PI / 2.0;
-          dep_vars[1] = Arcsinh(1.0 / Q(x1)) / 2.0;
-      } else { // O-mode
-          dep_vars[0] = BetaB(x1) + delta(x1);
-          dep_vars[1] = Arcsinh(-1.0 / Q(x1)) / 2.0;
-      }
-      /*--------------*/
+    /*Initial values*/
+    if (Globals::mode == 0) { // X-mode
+        dep_vars[0] = BetaB(x1) + delta(x1) + constants::PI / 2.0;
+        dep_vars[1] = Arcsinh(1.0 / Q(x1)) / 2.0;
+    } else { // O-mode
+        dep_vars[0] = BetaB(x1) + delta(x1);
+        dep_vars[1] = Arcsinh(-1.0 / Q(x1)) / 2.0;
+    }
+    /*--------------*/
 
-      double PA = dep_vars[0] * 180 / constants::PI;
-      double tau = constants::PI * constants::R_star * integrate(dtau, x1, Globals::RLC) / (constants::c * Globals::omega);
-      double gf = gFunc(x1);
-      double II0 = gf;
-      double II = II0 * exp (-tau);
+    double PA = dep_vars[0] * 180 / constants::PI;
+    double tau = constants::PI * constants::R_star * integrate(dtau, x1, Globals::RLC) / (constants::c * Globals::omega);
+    double gf = gFunc(x1);
+    double II0 = gf;
+    double II = II0 * exp (-tau);
 
-      double VV = II * tanh(2.0 * dep_vars[1]);
-      output0 << phi_t << " " << II0 << " " << VV << " " << PA << endl;
+    double VV = II * tanh(2.0 * dep_vars[1]);
+    output0 << phi_t << " " << II0 << " " << VV << " " << PA << endl;
 
-      int nvar = 2, nok = 0, nbad = 0;
-      double deps = 1.0, h1 = 1.0e-14, hmin = 1.0e-15;
-      odeint(dep_vars, nvar, x1, x2, deps, h1, hmin, nok, nbad, RHS);
+    int nvar = 2, nok = 0, nbad = 0;
+    double deps = 1.0, h1 = 1.0e-14, hmin = 1.0e-15;
+    odeint(dep_vars, nvar, x1, x2, deps, h1, hmin, nok, nbad, RHS);
 
-      VV = II * tanh(2.0 * dep_vars[1]);
-      PA = dep_vars[0] * 180.0 / constants::PI;
+    VV = II * tanh(2.0 * dep_vars[1]);
+    PA = dep_vars[0] * 180.0 / constants::PI;
 
-      // cout << "\tI: " << II << "\n\tV: " << VV << "\n\tPA: " << -PA << endl << endl;
-      output1 << phi_t << " " << II << " " << VV << " " << -PA << endl;
+    // cout << "\tI: " << II << "\n\tV: " << VV << "\n\tPA: " << -PA << endl << endl;
+    output1 << phi_t << " " << II << " " << VV << " " << -PA << endl;
 
-      DelMas();
+    DelMas();
   }
   output0.close();
   output1.close();
