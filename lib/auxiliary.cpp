@@ -4,7 +4,7 @@
 #include "pulsar_parameters.h"
 #include "constants.h"
 #include "functions.h"
-#include "auxilary.h"
+#include "auxiliary.h"
 using namespace std;
 
 double theta_em;

@@ -4,7 +4,7 @@
 #include "constants.h"
 #include "pulsar_parameters.h"
 #include "process_functions.h"
-#include "auxilary.h"
+#include "auxiliary.h"
 
 void RHS(double R, double *f, double *dydx) {
 	double coeff = constants::R_star * Globals::omega / (2.0 * constants::c);

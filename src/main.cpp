@@ -18,7 +18,7 @@ using namespace std;
 
 #include "../lib/functions.h"
 #include "../lib/process_functions.h"
-#include "../lib/auxilary.h"
+#include "../lib/auxiliary.h"
 
 #include "../lib/integrator.h"
 #include "../lib/RHS.h"
@@ -34,7 +34,7 @@ void displayVector (vector <double> a) {
 
 int main(int argc, char* argv[]) {
   // Reading flags >
-  string input_name, path = "output";
+  string input_name, out_path = "output";
   bool found_input = false;
   for (int i=0; i<argc; ++i) {
 		if (typeid(argv[i]) == typeid(char*)) {
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 			}
       if (strncmp(argv[i], "-o", 3) == 0) {
 				if (i+1 < argc) {
-					path = argv[i+1];
+					out_path = argv[i+1];
         }
 				else {
           throw_error("ERROR: No output path given.");
@@ -66,8 +66,8 @@ int main(int argc, char* argv[]) {
 
   define_Globals(input_name);
 
-  string name = read_from_file_str(input_name, "run_id");
-  cout << "RUN_ID: " << name << "\n\n";
+  string run_id = read_from_file_str(input_name, "run_id");
+  cout << "RUN_ID: " << run_id << "\n\n";
 
   cout << "\nR_esc: " << Globals::RESCAPE << endl;
   cout << "R_A: " << Globals::ROMODE << endl;
@@ -78,11 +78,11 @@ int main(int argc, char* argv[]) {
   else MODE = "O-mode";
 
   struct stat st = {0};
-  if (stat(path.c_str(), &st) == -1) {
-      mkdir(path.c_str(), 0700);
+  if (stat(out_path.c_str(), &st) == -1) {
+      mkdir(out_path.c_str(), 0700);
   }
 
-  ofstream outputData(path + "/" + name + ".dat");
+  ofstream outputData(out_path + "/" + run_id + ".dat");
   outputData
       << "alpha = " << Globals::alpha_deg
       << "\nbeta = " << Globals::beta_deg
@@ -105,10 +105,10 @@ int main(int argc, char* argv[]) {
 //    SIMULATION STARTS HERE
 //
 
-  ofstream output0(path + "/" + name + "[0].dat");
-  ofstream output1(path + "/" + name + "[1].dat");
+  ofstream output0(out_path + "/" + run_id + "[0].dat");
+  ofstream output1(out_path + "/" + run_id + "[1].dat");
 
-  /*ofstream plot(path + "betadelta.dat");
+  /*ofstream plot(out_path + "betadelta.dat");
   PHI0 = 5.0 * constants::PI / 180.0;
   findInitPoints(PHI0);
   for (double r = 58.0; r <= 62.0; r += 0.1) {
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
      // PlotRperp ();
 
       /*string name1 = "theory_r_perp";
-  	ofstream output2(path + name1 + ".dat");
+  	ofstream output2(out_path + name1 + ".dat");
   	double RR = x2;
   	while(x1 < RR){
   		output2 << RR << " " << psi_m(RR)/sqrt(NORM(vR(RR)))<< endl;
@@ -171,7 +171,7 @@ int main(int argc, char* argv[]) {
       VV = II * tanh(2.0 * dep_vars[1]);
       PA = dep_vars[0] * 180.0 / constants::PI;
 
-      cout << "\tI: " << II << "\n\tV: " << VV << "\n\tPA: " << -PA << endl << endl;
+      // cout << "\tI: " << II << "\n\tV: " << VV << "\n\tPA: " << -PA << endl << endl;
       output1 << phi_t << " " << II << " " << VV << " " << -PA << endl;
 
       DelMas();

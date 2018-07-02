@@ -7,7 +7,7 @@
 #include "constants.h"
 #include "functions.h"
 #include "process_functions.h"
-#include "auxilary.h"
+#include "auxiliary.h"
 using namespace std;
 
 // most of functions should be local
@@ -293,9 +293,9 @@ double r_perpFromR (double R1, double R2){
 	string name0 = "rperp_num";
 	string name1 = "rperp_the";
 	ofstream output0(path + name0 + ".dat");
-    ofstream output1(path + name1 + ".dat");
+  ofstream output1(path + name1 + ".dat");
 
-    double rth = 0.0;
+  double rth = 0.0;
 
 	CreateMas( (int)(1.5*Globals::RESCAPE/10.0) + 2);
     vector <double> r(3);

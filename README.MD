@@ -6,9 +6,9 @@ Theoretical basis for the program is given in the following papers <sup>[1](#myf
 
 ### Libraries description
 `lib` folder contains all the necessary libraries.
-* `Nrutil.h` and `diffeqsolver.h` are from "Numerical Recipes in C" <sup>[4](#myfootnote4)</sup> textbook and contain everything to solve nonlinear ODE wirh rk4 routine.
+* `Nrutil.h` and `diffeqsolver.h` are from "Numerical Recipes in C" <sup>[4](#myfootnote4)</sup> textbook and contain everything to solve nonlinear ODE with rk4 routine.
 * `integrator.h` is a custom one dimensional function integrator. `functions.h` contains custom functions and methods for vector analysis.
-* All the physical functions involved are in `process_functions.h` and the right-hand side of the ODE is writen in `RHS.h`. `auxilary.h` is to store some of the auxilary routines used, such as finding the radiation point.
+* All the physical functions involved are in `process_functions.h` and the right-hand side of the ODE is written in `RHS.h`. `auxiliary.h` is to store some of the auxiliary routines used, such as finding the radiation point.
 * `constants.h` is to store all the necessary constants within the `constants::` namespace.
 
 ### Running

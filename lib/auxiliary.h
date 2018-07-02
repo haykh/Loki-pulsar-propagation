@@ -1,4 +1,4 @@
-#pragma AUXILARY
+#pragma AUXILIARY
 
 extern double theta_em;
 extern double phi_em;
