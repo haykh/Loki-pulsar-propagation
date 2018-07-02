@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
 
     //freeM();
     r_perpFromR (x1, x2);
-   // PlotRperp ();
+    // PlotRperp ();
 
     /*string name1 = "theory_r_perp";
 	   ofstream output2(out_path + name1 + ".dat");
@@ -142,8 +142,8 @@ int main(int argc, char* argv[]) {
 		     output2 << RR << " " << psi_m(RR)/sqrt(NORM(vR(RR)))<< endl;
 		       RR = RR - 100.0;
 	        }
-	         output2.close();
-           //cout << "r_perp for initial point from dipol: " << psi_m(x2)/sqrt(NORM(vR(x2))) << "\n" << endl;*/
+          output2.close();
+    //cout << "r_perp for initial point from dipol: " << psi_m(x2)/sqrt(NORM(vR(x2))) << "\n" << endl;*/
 
     /*Initial values*/
     if (Globals::mode == 0) { // X-mode
