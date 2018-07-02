@@ -14,6 +14,6 @@ fphi        1.0         # Split-monopole parameter
 alpha_deg   45.0
 beta_deg    10.0
 
-phi_start   -15.0       # Start from phase
-phi_end     15.0        # End with phase
+phi_start   -10.0       # Start from phase
+phi_end     10.0        # End with phase
 phi_step    1.0         # Step phase
