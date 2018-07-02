@@ -205,17 +205,17 @@ double BetaB (double R) {
 double gFunc (double R) {
 	double rperp;
 	double err;
-	polint(Rtr, r_perp, (int) (1.5*Globals::RESCAPE/100.0)+2, R, &rperp, &err);
+	polint(Rtr, r_perp, (int) (1.5*Globals::RESCAPE/100.0)+1, R, &rperp, &err);
 	double f = pow(rperp/sqrt(Globals::RLC), 2);
-  double theta = ANGLE(vR(R), Globals::vOmega);
-  double dtheta = 5.0 * constants::PI / 180.0;
-  double gap;
-  if (Globals::alpha_deg > 80)
-    gap = (1 - exp(-pow(constants::PI / 2.0 - theta, 2) / (2.0 * dtheta * dtheta)));
-  else
-    gap = 1.0;
-  // double rperp = sin(psi_m(R)) * Rr / (Rr * sqrt(Rr / Globals::RLC));
-  return (pow(f, 2.5) * exp(-f * f) / (pow(f, 2.5) + pow(Globals::f0, 2.5))) * gap;
+	double theta = ANGLE(vR(R), Globals::vOmega);
+	double dtheta = 5.0 * constants::PI / 180.0;
+	double gap;
+	if (Globals::alpha_deg > 80)
+    	gap = (1 - exp(-pow(constants::PI / 2.0 - theta, 2) / (2.0 * dtheta * dtheta)));
+	else
+    	gap = 1.0;
+	// double rperp = sin(psi_m(R)) * Rr / (Rr * sqrt(Rr / Globals::RLC));
+	return (pow(f, 2.5) * exp(-f * f) / (pow(f, 2.5) + pow(Globals::f0, 2.5))) * gap;
 }
 double Ne (double R) {
   //double f = pow(sin(psi_m(R)), 2) * Globals::RLC / NORM(vR(R));
@@ -286,51 +286,42 @@ double dtau (double R) {
   return pow(omegaP(R), 2) * fDist (fabs(omegaB(R)) / (omegaW(R) * gammaU(R)));
 }
 
+/*NEW PART*/
+
 double r_perpFromR (double R1, double R2){
-	string path = "dats/";
-	string name0 = "rperp_num";
-	string name1 = "rperp_the";
+	string path = "my_output/";
+	string name0 = "rperp";
 	ofstream output0(path + name0 + ".dat");
-  ofstream output1(path + name1 + ".dat");
 
-  double rth = 0.0;
+	double rth = 0.0;
 
-	CreateMas( (int)(1.5*Globals::RESCAPE/10.0) + 2);
+	CreateMas( (int)(1.5*Globals::RESCAPE/10.0) + 1);
     vector <double> r(3);
-    int i = 1;
-    while(R1 <= R2){
+    vector <double> m(3);
+    int i = 0;
+    m = vMoment(R2); //take fix moment for a phase
+    while(R1 <= R2){ //take point
     	r = vR(R2);
     	rth = sin(psi_m(R2))/sqrt(NORM(r));
-    	while(NORM(r) > 1.003){
-    		r = SUM(r, TIMES(-0.01, Bxyz(r)));//vb((r[2]-Globals::R_em*cos(theta_em))/cos(dzeta))));
+    	while(NORM(r) > 1.0){ //integrate along B
+    		r = SUM(r, TIMES(-0.01, Bxyz(r, m)));
     		//cout << r[0] << " " << r[1] << " " << r[2] << " " << NORM(r) <<"\n" << endl;
     	}
-    	r_perp[i] = ANGLE(r, M(r));
+    	r_perp[i] = ANGLE(r, m);
     	Rtr[i] = R2;
-    	output0 << R2 << " " << ANGLE(r, M(r)) << "\n";//NORM(SUM(TIMES(-1.0, r), vMoment(R2))) / sqrt(NORM(r)) << "\n"; //ANGLE(r, vMoment(R2)) / sqrt(R2) << "\n" <<  endl;
-    	output1 << R2 << " " << rth << "\n";
+    	output0 << R2 << " " << ANGLE(r, m) << " " << rth << "\n";
     	R2 = R2 - 100.0;
     	i+=1;
     }
     output0.close();
-    output1.close();
     return 0;
 }
 
-vector <double> Bxyz(vector <double> r){
+vector <double> Bxyz(vector <double> r, vector <double> m){
 	vector <double> n(3);
 	n = NORMALIZE(r);
-  return SUM(TIMES(3.0 * SCALAR(M(r), n), n), TIMES(-1.0, M(r)));
+  return SUM(TIMES(3.0 * SCALAR(m, n), n), TIMES(-1.0, m));
 }
-
-vector <double> M (vector <double> r) {
-  vector <double> mvec(3);
-  mvec[0] = sin(Globals::alpha) * cos(Globals::PHI0 + (r[2] - Globals::R_em * cos(theta_em))/ (Globals::RLC * cos(Globals::dzeta)));
-  mvec[1] = sin(Globals::alpha) * sin(Globals::PHI0 + (r[2] - Globals::R_em * cos(theta_em))/ (Globals::RLC * cos(Globals::dzeta)));
-  mvec[2] = cos(Globals::alpha);
-  return mvec;
-} // Moment vector
-
 
 void polint(double xa[], double ya[], int n, double x, double *y, double *dy)
 //Given arrays xa[1..n] and ya[1..n], and given a value x, this routine returns a value y, and an error estimate dy. If P(x) is the polynomial of degree N − 1 such that P(xai) = yai,i = 1,...,n, then the returned value y = P(x).

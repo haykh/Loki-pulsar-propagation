@@ -131,9 +131,7 @@ int main(int argc, char* argv[]) {
     // if (RESCAPE < 1000.0) x2 = 1500.0;
     x2 = 1.5 * Globals::RESCAPE;
 
-    //freeM();
     r_perpFromR (x1, x2);
-   // PlotRperp ();
 
     /*string name1 = "theory_r_perp";
 	   ofstream output2(out_path + name1 + ".dat");
