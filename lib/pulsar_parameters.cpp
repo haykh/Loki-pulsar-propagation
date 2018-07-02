@@ -68,7 +68,7 @@ double read_from_file (string input_name, const string param) {
     throw_error(msg.str());
     return 0;
 }
-string read_from_file_str (string input_name, const string param) {
+string read_from_file_str (string input_name, const string param, const string def_val) {
     ifstream infile(input_name);
     string str;
     stringstream msg;
@@ -90,9 +90,7 @@ string read_from_file_str (string input_name, const string param) {
     } else {
       throw_error("ERROR: Cannot open the input file.");
     }
-    msg << "ERROR: Cannot find the given parameter '" << param << "' in the input file.";
-    throw_error(msg.str());
-    return "NaN";
+    return def_val;
 }
 
 // initialize Globals >

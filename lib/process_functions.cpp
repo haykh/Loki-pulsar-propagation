@@ -198,7 +198,7 @@ double BetaB (double R) {
   double bx = SCALAR(XX, vB(R));
   double by = SCALAR(YY, vB(R));
   double bb = sqrt (bx * bx + by * by);
-//    return acos (bx / bb) * sgn (by);
+  // return acos (bx / bb) * sgn (by);
   return atan(by / bx);
 }
 

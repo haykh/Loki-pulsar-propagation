@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
 
   define_Globals(input_name);
 
-  string run_id = read_from_file_str(input_name, "run_id");
+  string run_id = read_from_file_str(input_name, "run_id", "my_run");
   cout << "RUN_ID: " << run_id << "\n\n";
 
   cout << "\nR_esc: " << Globals::RESCAPE << endl;
@@ -147,11 +147,11 @@ int main(int argc, char* argv[]) {
 
     /*Initial values*/
     if (Globals::mode == 0) { // X-mode
-        dep_vars[0] = BetaB(x1) + delta(x1) + constants::PI / 2.0;
-        dep_vars[1] = Arcsinh(1.0 / Q(x1)) / 2.0;
+      dep_vars[0] = BetaB(x1) + delta(x1) + constants::PI / 2.0;
+      dep_vars[1] = Arcsinh(1.0 / Q(x1)) / 2.0;
     } else { // O-mode
-        dep_vars[0] = BetaB(x1) + delta(x1);
-        dep_vars[1] = Arcsinh(-1.0 / Q(x1)) / 2.0;
+      dep_vars[0] = BetaB(x1) + delta(x1);
+      dep_vars[1] = Arcsinh(-1.0 / Q(x1)) / 2.0;
     }
     /*--------------*/
 
