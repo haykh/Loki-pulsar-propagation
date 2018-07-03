@@ -145,7 +145,8 @@ double BetaB (double R) {
 
 double gFunc (double R) {
   double Rr = NORM(vR(R));
-	double rperp = sin(psi_m(R)) * Rr / (Rr * sqrt(Rr / Globals::RLC));
+	// double rperp = sin(psi_m(R)) * Rr / (Rr * sqrt(Rr / Globals::RLC));
+  polint(Rtr, r_perp, (int) (1.5*Globals::RESCAPE/100.0)+2, R, &rperp, &err);
 	double err;
 	double f = pow(rperp / sqrt(Globals::RLC), 2);
 	double theta = ANGLE(vR(R), Globals::vOmega);
