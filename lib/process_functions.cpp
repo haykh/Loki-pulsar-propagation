@@ -12,6 +12,10 @@ using namespace std;
 
 // most of functions should be local
 
+double* r_perp;
+double* Rtr;
+
+
 double sgn (double value) {
   if (value >= 0.0) {
     return 1.0;
@@ -144,15 +148,9 @@ double BetaB (double R) {
 }
 
 double gFunc (double R) {
-<<<<<<< HEAD
-  double Rr = NORM(vR(R));
-	// double rperp = sin(psi_m(R)) * Rr / (Rr * sqrt(Rr / Globals::RLC));
+  double rperp, err;
   polint(Rtr, r_perp, (int) (1.5*Globals::RESCAPE/100.0)+2, R, &rperp, &err);
-	double err;
 	double f = pow(rperp / sqrt(Globals::RLC), 2);
-=======
-  double f = pow(sin(psi_m(R)), 2) * Globals::RLC / NORM(vR(R));
->>>>>>> master
 	double theta = ANGLE(vR(R), Globals::vOmega);
 	double dtheta = 5.0 * constants::PI / 180.0;
 	double gap = 1.0;
@@ -226,9 +224,6 @@ double dtau (double R) {
 
 /* NEW STUFF HERE /> */
 
-double* r_perp;
-double* Rtr;
-
 void CreateMas(int N){
   r_perp = new double [N];
   Rtr = new double [N];
@@ -279,7 +274,7 @@ vector <double> Bxyz(vector <double> r, vector <double> m){
 }
 
 void polint(double xa[], double ya[], int n, double x, double *y, double *dy)
-//Given arrays xa[1..n] and ya[1..n], and given a value x, this routine returns a value y, and an error estimate dy. If P(x) is the polynomial of degree N − 1 such that P(xai) = yai,i = 1,...,n, then the returned value y = P(x).
+// Given arrays xa[1..n] and ya[1..n], and given a value x, this routine returns a value y, and an error estimate dy. If P(x) is the polynomial of degree N − 1 such that P(xai) = yai,i = 1,...,n, then the returned value y = P(x).
 {
 	int i,m,ns=1;
 	double den, dif, dift, ho, hp, w;
