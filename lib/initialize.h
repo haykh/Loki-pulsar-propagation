@@ -11,8 +11,11 @@ namespace Globals {
         PHI0,
         R_em, RLC, RESCAPE, ROMODE;
   extern vector <double> vOmega;
+  extern string RUN_ID, input_name, out_path;
 }
 
 void findInitPoints (double PHI0);
 
-void define_Globals(string input_name);
+void define_Globals();
+
+void initialize(int argc, char* argv[]);
