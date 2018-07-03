@@ -1,6 +1,12 @@
 #include <iostream>
 #include <math.h>
 #include <vector>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include "read_write.h"
 #include "constants.h"
 #include "functions.h"
@@ -82,24 +88,25 @@ double Globals::theta_em, Globals::phi_em,
       Globals::PHI0,
       Globals::R_em, Globals::RLC, Globals::RESCAPE, Globals::ROMODE;
 vector <double> Globals::vOmega;
+string Globals::RUN_ID, Globals::input_name, Globals::out_path;
 // < initialize Globals
 
-void define_Globals(string input_name) {
-  Globals::B12 = read_from_file(input_name, "B12"); // Surface B-field in 10^12 Gs
-  Globals::Period = read_from_file(input_name, "Period"); // Rotation period in sec
-  Globals::freqGHz = read_from_file(input_name, "freqGHz"); // Radiation frequency in GHz
+void define_Globals() {
+  Globals::B12 = read_from_file(Globals::input_name, "B12"); // Surface B-field in 10^12 Gs
+  Globals::Period = read_from_file(Globals::input_name, "Period"); // Rotation period in sec
+  Globals::freqGHz = read_from_file(Globals::input_name, "freqGHz"); // Radiation frequency in GHz
 
-  Globals::lambda = read_from_file(input_name, "lambda"); // Plasma multiplicity // normally 10000
-  Globals::gamma0 = read_from_file(input_name, "gamma0"); // Plasma mean gamma factor // normally 50
-  Globals::f0 = read_from_file(input_name, "f0"); // Polar Cap gap width // normally 0.5
-  Globals::R_em = read_from_file(input_name, "R_em"); // Emission radius in star radii
+  Globals::lambda = read_from_file(Globals::input_name, "lambda"); // Plasma multiplicity // normally 10000
+  Globals::gamma0 = read_from_file(Globals::input_name, "gamma0"); // Plasma mean gamma factor // normally 50
+  Globals::f0 = read_from_file(Globals::input_name, "f0"); // Polar Cap gap width // normally 0.5
+  Globals::R_em = read_from_file(Globals::input_name, "R_em"); // Emission radius in star radii
 
-  Globals::mode = read_from_file(input_name, "mode"); // 1 = O-mode & 0 = X-mode
-  Globals::fr = read_from_file(input_name, "fr"); // Split-monopole parameter
-  Globals::fphi = read_from_file(input_name, "fphi"); // Split-monopole parameter
+  Globals::mode = read_from_file(Globals::input_name, "mode"); // 1 = O-mode & 0 = X-mode
+  Globals::fr = read_from_file(Globals::input_name, "fr"); // Split-monopole parameter
+  Globals::fphi = read_from_file(Globals::input_name, "fphi"); // Split-monopole parameter
 
-  Globals::alpha_deg = read_from_file(input_name, "alpha_deg");
-  Globals::beta_deg = read_from_file(input_name, "beta_deg");
+  Globals::alpha_deg = read_from_file(Globals::input_name, "alpha_deg");
+  Globals::beta_deg = read_from_file(Globals::input_name, "beta_deg");
 
   Globals::alpha = Globals::alpha_deg * constants::PI / 180.0; // Inclination angle in radians
   Globals::beta = Globals::beta_deg * constants::PI / 180.0; // Line of sight angle in radians;
@@ -116,4 +123,46 @@ void define_Globals(string input_name) {
   Globals::RLC = (constants::c / Globals::Omega) / constants::R_star;
   Globals::RESCAPE = 1.0e3 * pow(Globals::lambda / 1.0e4, 1.0/3.0) * pow(Globals::gamma0 / 100.0, -6.0/5.0) * pow(Globals::B0 / 1.0e12, 2.0/5.0) * pow(Globals::freqGHz, -2.0/5.0) * pow(Globals::Period, -1.0/5.0);
   Globals::ROMODE = 1.0e2 * pow(Globals::lambda / 1.0e4, 1.0/3.0) * pow(Globals::gamma0 / 100.0, 1.0/3.0) * pow(Globals::B0 / 1.0e12, 1.0/3.0) * pow(Globals::freqGHz, -2.0/3.0) * pow(Globals::Period, -1.0/3.0);
+}
+
+void initialize(int argc, char* argv[]) {
+  read_in_out(Globals::input_name, Globals::out_path, argc, argv);
+
+  define_Globals();
+
+  Globals::RUN_ID = read_from_file_str(Globals::input_name, "run_id", "my_run");
+  cout << "RUN_ID: " << Globals::RUN_ID << "\n\n";
+
+  cout << "\nR_esc: " << Globals::RESCAPE << endl;
+  cout << "R_A: " << Globals::ROMODE << endl;
+  cout << "R_lc: " << Globals::RLC << endl << endl;
+
+  string MODE;
+  if (Globals::mode == 0) MODE = "X-mode";
+  else MODE = "O-mode";
+
+  // Create output directory if doesn't exist
+  struct stat st = {0};
+  if (stat(Globals::out_path.c_str(), &st) == -1) {
+    mkdir(Globals::out_path.c_str(), 0700);
+  }
+
+  ofstream outputData(Globals::out_path + "/" + Globals::RUN_ID + ".dat");
+  outputData
+      << "alpha = " << Globals::alpha_deg
+      << "\nbeta = " << Globals::beta_deg
+      << "\n\nPeriod = " << Globals::Period
+      << "\nB12 = " << Globals::B12
+      << "\nfGHz = " << Globals::freqGHz
+      << "\n\nlambda = " << Globals::lambda
+      << "\ngamma0 = " << Globals::gamma0
+      << "\nf0 = " << Globals::f0
+      << "\nR_em = " << Globals::R_em
+      << "\n\n" + MODE
+      << "\nfr = " << Globals::fr
+      << "\nfphi = " << Globals::fphi
+      << "\n\n\nR_LC = " << Globals::RLC
+      << "\nR_escape = " << Globals::RESCAPE
+      << "\nR_A = " << Globals::ROMODE;
+  outputData.close();
 }

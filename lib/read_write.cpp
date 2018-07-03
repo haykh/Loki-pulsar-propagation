@@ -92,3 +92,37 @@ string read_from_file_str (string input_name, const string param, const string d
   }
   return def_val;
 }
+
+void read_in_out(string &in, string &out, int argc, char* argv[]) {
+  bool found_input = false, found_output = false;
+  for (int i=0; i<argc; ++i) {
+		if (typeid(argv[i]) == typeid(char*)) {
+			if (strncmp(argv[i], "-i", 3) == 0) {
+				if (i+1 < argc) {
+					in = argv[i+1];
+          found_input = true;
+        }
+				else {
+          throw_error("ERROR: No input file given.");
+				}
+			}
+      if (strncmp(argv[i], "-o", 3) == 0) {
+				if (i+1 < argc) {
+					out = argv[i+1];
+          found_output = true;
+        }
+				else {
+          throw_error("ERROR: No output path given.");
+				}
+			}
+		}
+	}
+  if (!found_input) {
+    throw_error("ERROR: No input file given.");
+  } else {
+    cout << "INPUT: " << in << "\n";
+  }
+  if (!found_output) {
+    out = "output";
+  }
+}
