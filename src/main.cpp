@@ -6,6 +6,10 @@
 #include <sstream>
 #include <typeinfo>
 
+#ifdef MPI
+  #include "mpi.h"
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -33,6 +37,11 @@ void displayVector (vector <double> a) {
 }
 
 int main(int argc, char* argv[]) {
+  #ifdef MPI
+    cout << "mpi enabled\n";
+  #endif
+  return 0;
+
   // Reading flags />
   string input_name, out_path = "output";
   bool found_input = false;
