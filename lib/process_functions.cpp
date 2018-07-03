@@ -3,31 +3,17 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include "pulsar_parameters.h"
+#include "read_write.h"
 #include "constants.h"
 #include "functions.h"
 #include "process_functions.h"
-#include "auxiliary.h"
+#include "initialize.h"
 using namespace std;
 
 // most of functions should be local
 
 double* r_perp;
 double* Rtr;
-
-void CreateMas(int N){
-  r_perp = new double [N];
-  Rtr = new double [N];
-  for (int i = 0; i < N; i++) {
-    r_perp[i] = 0.0;
-    Rtr[i] = 0.0;
-  }
-}
-
-void DelMas(){
-  delete[]r_perp;
-  delete[]Rtr;
-}
 
 double sgn (double value) {
   if (value >= 0.0) {
@@ -46,9 +32,9 @@ vector <double> vMoment (double R) {
 } // Moment vector
 vector <double> vR (double R) {
   vector <double> n0(3);
-  n0[0] = sin(theta_em) * cos(phi_em);
-  n0[1] = sin(theta_em) * sin(phi_em);
-  n0[2] = cos(theta_em);
+  n0[0] = sin(Globals::theta_em) * cos(Globals::phi_em);
+  n0[1] = sin(Globals::theta_em) * sin(Globals::phi_em);
+  n0[2] = cos(Globals::theta_em);
 
   vector <double> o(3);
   o[0] = sin(Globals::dzeta);
@@ -91,50 +77,13 @@ vector <double> vBsplit (double R) {
   temp[2] = Br * costh;
   return temp;
 }
-// vector <double> vBtor (double R) {
-//     double Rr = NORM(vR(R));
-//
-//     double rho = Rr * sin(psi_m(R));
-//     double R0 = Rr * sqrt(Rr / Globals::RLC);
-//
-//     vector <double> temp(3);
-//     if (rho > R0) {
-//         temp[0] = 0.0;
-//         temp[1] = 0.0;
-//         temp[2] = 0.0;
-//         return temp;
-//     }
-//
-//     vector <double> n;
-//     vector <double> m;
-//     vector <double> O;
-//     n = NORMALIZE(vR(R));
-//     m = NORMALIZE(vMoment(R));
-//     O = NORMALIZE(Globals::vOmega);
-//
-//     vector <double> nPerp;
-//     vector <double> OPerp;
-//     nPerp = NORMALIZE(SUM(n, TIMES(-SCALAR(n, m), m)));
-//     OPerp = NORMALIZE(SUM(O, TIMES(-SCALAR(O, m), m)));
-//
-//     double varphi = constants::PI + sgn(SCALAR(CROSS(OPerp, nPerp), m)) * ANGLE(OPerp, nPerp);
-//
-//     double COEFF = (-3.0 / 4.0) * sin(alpha);
-//     double Brho = (COEFF * sin(varphi) / Rr) * (rho * rho - R0 * R0);
-//     double Bvarphi = (COEFF * cos(varphi) / Rr) * (3.0 * rho * rho - R0 * R0);
-//
-//     double Bx1 = Brho * sin(varphi) + Bvarphi * cos(varphi);
-//     double By1 = - Brho * cos(varphi) + Bvarphi * sin(varphi);
-//
-//     temp[0] = -Bx1 * sin(PHI0 + R / Globals::RLC) - By1 * cos(alpha) * cos(PHI0 + R / Globals::RLC);
-//     temp[1] = Bx1 * cos(PHI0 + R / Globals::RLC) - By1 * cos(alpha) * sin(PHI0 + R / Globals::RLC);
-//     temp[2] = By1 * sin(alpha);
-//
-//     return TIMES(BMULT, temp);
-// }
 
 vector <double> vB (double R) {
-  return SUM(vBsplit(R), vBdipole(R));
+  if (Globals::fphi == 0 && Globals::fr == 0) {
+    return vBdipole(R);
+  } else {
+    return SUM(vBsplit(R), vBdipole(R));
+  }
 }
 vector <double> vb (double R) {
   return NORMALIZE(vB(R));
@@ -166,8 +115,7 @@ vector <double> vUdr (double R) {
   temp[0] = SCALAR(vBetaR(R), vn);
   temp[1] = SCALAR(vBetaR(R), vm);
   if (temp[0] * temp[0] + temp[1] * temp[1] >= 1.0) {
-    cout << "Error in vUdr\n";
-    exit (EXIT_FAILURE);
+    throw_error("ERROR: vUdr > 1.");
   }
   temp[2] = sqrt(1 - pow(temp[0], 2) - pow(temp[1], 2));
   return temp;
@@ -178,10 +126,6 @@ double delta (double R) {
   double sinth = sin(theta_kb(R));
   double costh = cos(theta_kb(R));
   double sign = sgn (- vy * costh / sqrt(pow(sinth - vx, 2) + pow(costh * vy , 2)));
-//    double addit = 0.0;
-//    if (sgn(vUdr(10.0)[1] * vy) == -1.0) { // don't even ask what this is
-//        addit = -2.0 * constants::PI;
-//    }
   return sign * acos((sinth - vx) / sqrt(pow(sinth - vx, 2) + pow(costh * vy , 2)));
 }
 double BetaB (double R) {
@@ -197,28 +141,25 @@ double BetaB (double R) {
 
   double bx = SCALAR(XX, vB(R));
   double by = SCALAR(YY, vB(R));
-  double bb = sqrt (bx * bx + by * by);
+  // double bb = sqrt (bx * bx + by * by);
   // return acos (bx / bb) * sgn (by);
   return atan(by / bx);
 }
 
 double gFunc (double R) {
-	double rperp;
+  double Rr = NORM(vR(R));
+	double rperp = sin(psi_m(R)) * Rr / (Rr * sqrt(Rr / Globals::RLC));
 	double err;
-	polint(Rtr, r_perp, (int) (1.5*Globals::RESCAPE/100.0)+1, R, &rperp, &err);
-	double f = pow(rperp/sqrt(Globals::RLC), 2);
+	// polint(Rtr, r_perp, (int) (1.5*Globals::RESCAPE/100.0)+1, R, &rperp, &err);
+	double f = pow(rperp / sqrt(Globals::RLC), 2);
 	double theta = ANGLE(vR(R), Globals::vOmega);
 	double dtheta = 5.0 * constants::PI / 180.0;
-	double gap;
+	double gap = 1.0;
 	if (Globals::alpha_deg > 80)
-    	gap = (1 - exp(-pow(constants::PI / 2.0 - theta, 2) / (2.0 * dtheta * dtheta)));
-	else
-    	gap = 1.0;
-	// double rperp = sin(psi_m(R)) * Rr / (Rr * sqrt(Rr / Globals::RLC));
+    gap = (1. - exp(-pow(constants::PI / 2.0 - theta, 2) / (2.0 * dtheta * dtheta)));
 	return (pow(f, 2.5) * exp(-f * f) / (pow(f, 2.5) + pow(Globals::f0, 2.5))) * gap;
 }
 double Ne (double R) {
-  //double f = pow(sin(psi_m(R)), 2) * Globals::RLC / NORM(vR(R));
   double nGJ = SCALAR(Globals::vOmega, vB(R)) * (Globals::B0 / pow(NORM(vR(R)), 3)) / (2 * constants::PI * constants::c * constants::e);
   return Globals::lambda * gFunc (R) * nGJ;
 }
@@ -243,12 +184,11 @@ double Q (double R) {
   double vz = vUdr(R) [2];
   double sinth = sin(theta_kb(R));
   double costh = cos(theta_kb(R));
-
   return Globals::lambda * omegaB(R) * Globals::omega * (pow(sinth - vx, 2) + pow(vy * costh, 2)) / (2 * pow(Globals::gamma0, 3) * pow(omegaW(R), 2) * (costh * (1 - vx * vx - vy * vy) - vz * (1.0 - sinth * vx)));
 }
 
 double fDist (double gamma) {
-  return ((6 * Globals::gamma0) / (pow(2.0, 1.0/6.0) * constants::PI)) * (pow(gamma, 4) / (2 * pow(gamma, 6) + pow(Globals::gamma0, 6)));
+  return ((6.0 * Globals::gamma0) / (pow(2.0, 1.0/6.0) * constants::PI)) * (pow(gamma, 4) / (2.0 * pow(gamma, 6) + pow(Globals::gamma0, 6)));
 }
 
 double gammaU (double R) {
@@ -256,22 +196,19 @@ double gammaU (double R) {
   double vy = vUdr(R) [1];
   return pow(1 - vx * vx - vy * vy, -0.5);
 }
-double A (double R) {
-  return pow(gammaU(R) * omegaW(R) / omegaB(R), 2);
-}
 
 double INTEGRAL (double gamma, double R) {
-  double cA = A(R);
+  double cA = pow(gammaU(R) * omegaW(R) / omegaB(R), 2);
   return -(pow(2, 2.0 / 3.0)*(-2*sqrt(3)*atan((2*pow(2, 1.0 / 3.0)*pow(gamma,2) - pow(Globals::gamma0,2))/
           (sqrt(3)*pow(Globals::gamma0,2))) - 2*log(pow(2, 1.0 / 3.0)*pow(gamma,2) + pow(Globals::gamma0,2)) +
-       log(pow(2, 2.0 / 3.0)*pow(gamma,4) - pow(2, 1.0 / 3.0)*pow(gamma,2)*pow(Globals::gamma0,2) +
-         pow(Globals::gamma0,4))) - pow(2, 1.0 / 3.0)*pow(Globals::gamma0,2)*cA*
-     (2*sqrt(3)*atan((2*pow(2, 1.0 / 3.0)*pow(gamma,2) - pow(Globals::gamma0,2))/(sqrt(3)*pow(Globals::gamma0,2))) -
-       2*log(pow(2, 1.0 / 3.0)*pow(gamma,2) + pow(Globals::gamma0,2)) +
-       log(pow(2, 2.0 / 3.0)*pow(gamma,4) - pow(2, 1.0 / 3.0)*pow(gamma,2)*pow(Globals::gamma0,2) +
-         pow(Globals::gamma0,4))) - 2*pow(Globals::gamma0,4)*pow(cA,2)*
-     (log(2*pow(gamma,6) + pow(Globals::gamma0,6)) - 3*log(fabs((1 - gamma*sqrt(cA))*(1 + gamma*sqrt(cA))))))/
-  (2.*pow(2, 1.0 / 6.0)*constants::PI*pow(Globals::gamma0,3)*(2 + pow(Globals::gamma0,6)*pow(cA,3)));
+          log(pow(2, 2.0 / 3.0)*pow(gamma,4) - pow(2, 1.0 / 3.0)*pow(gamma,2)*pow(Globals::gamma0,2) +
+          pow(Globals::gamma0,4))) - pow(2, 1.0 / 3.0)*pow(Globals::gamma0,2)*cA*
+          (2*sqrt(3)*atan((2*pow(2, 1.0 / 3.0)*pow(gamma,2) - pow(Globals::gamma0,2))/(sqrt(3)*pow(Globals::gamma0,2))) -
+          2*log(pow(2, 1.0 / 3.0)*pow(gamma,2) + pow(Globals::gamma0,2)) +
+          log(pow(2, 2.0 / 3.0)*pow(gamma,4) - pow(2, 1.0 / 3.0)*pow(gamma,2)*pow(Globals::gamma0,2) +
+          pow(Globals::gamma0,4))) - 2*pow(Globals::gamma0,4)*pow(cA,2)*
+          (log(2*pow(gamma,6) + pow(Globals::gamma0,6)) - 3*log(fabs((1 - gamma*sqrt(cA))*(1 + gamma*sqrt(cA))))))/
+          (2.*pow(2, 1.0 / 6.0)*constants::PI*pow(Globals::gamma0,3)*(2 + pow(Globals::gamma0,6)*pow(cA,3)));
 }
 double Lambda (double R) {
   double vx = vUdr(R) [0];
@@ -288,6 +225,20 @@ double dtau (double R) {
 
 /*NEW PART*/
 
+void CreateMas(int N){
+  r_perp = new double [N];
+  Rtr = new double [N];
+  for (int i = 0; i < N; i++) {
+    r_perp[i] = 0.0;
+    Rtr[i] = 0.0;
+  }
+}
+
+void DelMas(){
+  delete[]r_perp;
+  delete[]Rtr;
+}
+
 double r_perpFromR (double R1, double R2){
 	string path = "my_output/";
 	string name0 = "rperp";
@@ -296,25 +247,25 @@ double r_perpFromR (double R1, double R2){
 	double rth = 0.0;
 
 	CreateMas( (int)(1.5*Globals::RESCAPE/10.0) + 1);
-    vector <double> r(3);
-    vector <double> m(3);
-    int i = 0;
-    m = vMoment(R2); //take fix moment for a phase
-    while(R1 <= R2){ //take point
-    	r = vR(R2);
-    	rth = sin(psi_m(R2))/sqrt(NORM(r));
-    	while(NORM(r) > 1.0){ //integrate along B
-    		r = SUM(r, TIMES(-0.01, Bxyz(r, m)));
-    		//cout << r[0] << " " << r[1] << " " << r[2] << " " << NORM(r) <<"\n" << endl;
-    	}
-    	r_perp[i] = ANGLE(r, m);
-    	Rtr[i] = R2;
-    	output0 << R2 << " " << ANGLE(r, m) << " " << rth << "\n";
-    	R2 = R2 - 100.0;
-    	i+=1;
-    }
-    output0.close();
-    return 0;
+  vector <double> r(3);
+  vector <double> m(3);
+  int i = 0;
+  m = vMoment(R2); //take fix moment for a phase
+  while(R1 <= R2){ //take point
+  	r = vR(R2);
+  	rth = sin(psi_m(R2))/sqrt(NORM(r));
+  	while(NORM(r) > 1.0){ //integrate along B
+  		r = SUM(r, TIMES(-0.01, Bxyz(r, m)));
+  		//cout << r[0] << " " << r[1] << " " << r[2] << " " << NORM(r) <<"\n" << endl;
+  	}
+  	r_perp[i] = ANGLE(r, m);
+  	Rtr[i] = R2;
+  	output0 << R2 << " " << ANGLE(r, m) << " " << rth << "\n";
+  	R2 = R2 - 100.0;
+  	i+=1;
+  }
+  output0.close();
+  return 0;
 }
 
 vector <double> Bxyz(vector <double> r, vector <double> m){

@@ -14,11 +14,11 @@
 using namespace std;
 
 #include "../lib/constants.h"
-#include "../lib/pulsar_parameters.h"
+#include "../lib/read_write.h"
 
 #include "../lib/functions.h"
 #include "../lib/process_functions.h"
-#include "../lib/auxiliary.h"
+#include "../lib/initialize.h"
 
 #include "../lib/integrator.h"
 #include "../lib/RHS.h"
@@ -33,7 +33,7 @@ void displayVector (vector <double> a) {
 }
 
 int main(int argc, char* argv[]) {
-  // Reading flags >
+  // Reading flags />
   string input_name, out_path = "output";
   bool found_input = false;
   for (int i=0; i<argc; ++i) {
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
   } else {
     cout << "INPUT: " << input_name << "\n";
   }
-  // < Reading flags
+  // </ Reading flags
 
   define_Globals(input_name);
 
@@ -77,6 +77,7 @@ int main(int argc, char* argv[]) {
   if (Globals::mode == 0) MODE = "X-mode";
   else MODE = "O-mode";
 
+  // Create output directory if doesn't exist
   struct stat st = {0};
   if (stat(out_path.c_str(), &st) == -1) {
       mkdir(out_path.c_str(), 0700);
@@ -101,12 +102,8 @@ int main(int argc, char* argv[]) {
       << "\nR_A = " << Globals::ROMODE;
   outputData.close();
 
-//
-//    SIMULATION STARTS HERE
-//
-
-  ofstream output0(out_path + "/" + run_id + "[0].dat");
-  ofstream output1(out_path + "/" + run_id + "[1].dat");
+  ofstream output0(out_path + "/" + run_id + "_0.dat");
+  ofstream output1(out_path + "/" + run_id + "_1.dat");
 
   /*ofstream plot(out_path + "betadelta.dat");
   PHI0 = 5.0 * constants::PI / 180.0;
@@ -118,6 +115,8 @@ int main(int argc, char* argv[]) {
   plot.close();
   return 0;*/
 
+  // SIMULATION STARTS HERE />
+
   double phi_t_start = read_from_file(input_name, "phi_start");
   double phi_t_end = read_from_file(input_name, "phi_end");
   double phi_t_step = read_from_file(input_name, "phi_step");
@@ -127,11 +126,11 @@ int main(int argc, char* argv[]) {
     findInitPoints (Globals::PHI0);
 
     double x1, x2, dep_vars[2];
-    x1 = 0.0;
+    x1 = 1.0;
     // if (RESCAPE < 1000.0) x2 = 1500.0;
     x2 = 1.5 * Globals::RESCAPE;
 
-    r_perpFromR (x1, x2);
+    // r_perpFromR (x1, x2);
 
     /*string name1 = "theory_r_perp";
 	   ofstream output2(out_path + name1 + ".dat");
@@ -143,7 +142,7 @@ int main(int argc, char* argv[]) {
           output2.close();
     //cout << "r_perp for initial point from dipol: " << psi_m(x2)/sqrt(NORM(vR(x2))) << "\n" << endl;*/
 
-    /*Initial values*/
+    // Initial values />
     if (Globals::mode == 0) { // X-mode
       dep_vars[0] = BetaB(x1) + delta(x1) + constants::PI / 2.0;
       dep_vars[1] = Arcsinh(1.0 / Q(x1)) / 2.0;
@@ -151,7 +150,7 @@ int main(int argc, char* argv[]) {
       dep_vars[0] = BetaB(x1) + delta(x1);
       dep_vars[1] = Arcsinh(-1.0 / Q(x1)) / 2.0;
     }
-    /*--------------*/
+    // </ Initial values
 
     double PA = dep_vars[0] * 180 / constants::PI;
     double tau = constants::PI * constants::R_star * integrate(dtau, x1, Globals::RLC) / (constants::c * Globals::omega);

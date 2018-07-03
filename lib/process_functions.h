@@ -4,7 +4,6 @@ using namespace std;
 vector <double> vB(double R);
 vector <double> vBsplit(double R);
 
-
 double delta (double R);
 double BetaB (double R);
 double Q (double R);

@@ -2,9 +2,9 @@
 #include <vector>
 #include "RHS.h"
 #include "constants.h"
-#include "pulsar_parameters.h"
+#include "read_write.h"
 #include "process_functions.h"
-#include "auxiliary.h"
+#include "initialize.h"
 
 void RHS(double R, double *f, double *dydx) {
 	double coeff = constants::R_star * Globals::omega / (2.0 * constants::c);
