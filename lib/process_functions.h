@@ -17,9 +17,3 @@ double gFunc (double R);
 vector <double> vMoment (double R);
 vector <double> vUdr (double R);
 double theta_kb (double R);
-
-double r_perpFromR(double R1, double R2);
-vector <double> Bxyz(vector <double> r, vector <double> m);
-void polint(double xa[], double ya[], int n, double x, double *y, double *dy);
-void CreateMas(int N);
-void DelMas();

@@ -7,7 +7,7 @@
 #include "initialize.h"
 using namespace std;
 
-// finding initial point of generation (along field line)
+// finding initial point of generation for dipole field b0 (along field line)
 
 vector <double> b0 (double th, double ph, double PHI0) {
   vector <double> n0(3);

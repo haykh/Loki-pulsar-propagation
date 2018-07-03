@@ -12,9 +12,6 @@ using namespace std;
 
 // most of functions should be local
 
-double* r_perp;
-double* Rtr;
-
 double sgn (double value) {
   if (value >= 0.0) {
     return 1.0;
@@ -150,7 +147,6 @@ double gFunc (double R) {
   double Rr = NORM(vR(R));
 	double rperp = sin(psi_m(R)) * Rr / (Rr * sqrt(Rr / Globals::RLC));
 	double err;
-	// polint(Rtr, r_perp, (int) (1.5*Globals::RESCAPE/100.0)+1, R, &rperp, &err);
 	double f = pow(rperp / sqrt(Globals::RLC), 2);
 	double theta = ANGLE(vR(R), Globals::vOmega);
 	double dtheta = 5.0 * constants::PI / 180.0;
@@ -221,90 +217,4 @@ double Lambda (double R) {
 
 double dtau (double R) {
   return pow(omegaP(R), 2) * fDist (fabs(omegaB(R)) / (omegaW(R) * gammaU(R)));
-}
-
-/*NEW PART*/
-
-void CreateMas(int N){
-  r_perp = new double [N];
-  Rtr = new double [N];
-  for (int i = 0; i < N; i++) {
-    r_perp[i] = 0.0;
-    Rtr[i] = 0.0;
-  }
-}
-
-void DelMas(){
-  delete[]r_perp;
-  delete[]Rtr;
-}
-
-double r_perpFromR (double R1, double R2){
-	string path = "my_output/";
-	string name0 = "rperp";
-	ofstream output0(path + name0 + ".dat");
-
-	double rth = 0.0;
-
-	CreateMas( (int)(1.5*Globals::RESCAPE/10.0) + 1);
-  vector <double> r(3);
-  vector <double> m(3);
-  int i = 0;
-  m = vMoment(R2); //take fix moment for a phase
-  while(R1 <= R2){ //take point
-  	r = vR(R2);
-  	rth = sin(psi_m(R2))/sqrt(NORM(r));
-  	while(NORM(r) > 1.0){ //integrate along B
-  		r = SUM(r, TIMES(-0.01, Bxyz(r, m)));
-  		//cout << r[0] << " " << r[1] << " " << r[2] << " " << NORM(r) <<"\n" << endl;
-  	}
-  	r_perp[i] = ANGLE(r, m);
-  	Rtr[i] = R2;
-  	output0 << R2 << " " << ANGLE(r, m) << " " << rth << "\n";
-  	R2 = R2 - 100.0;
-  	i+=1;
-  }
-  output0.close();
-  return 0;
-}
-
-vector <double> Bxyz(vector <double> r, vector <double> m){
-	vector <double> n(3);
-	n = NORMALIZE(r);
-  return SUM(TIMES(3.0 * SCALAR(m, n), n), TIMES(-1.0, m));
-}
-
-void polint(double xa[], double ya[], int n, double x, double *y, double *dy)
-//Given arrays xa[1..n] and ya[1..n], and given a value x, this routine returns a value y, and an error estimate dy. If P(x) is the polynomial of degree N − 1 such that P(xai) = yai,i = 1,...,n, then the returned value y = P(x).
-{
-	int i,m,ns=1;
-	double den, dif, dift, ho, hp, w;
-	double *c,*d;
-	dif = fabs(x-xa[1]);
-	c = new double [n];
-	d = new double [n];
-	for (i=1;i<=n;i++) {
-		if ( (dift=fabs(x-xa[i])) < dif) {
-			ns=i;
-			dif=dift; }
-		c[i]=ya[i];
-    	d[i]=ya[i];
-	}
-	*y=ya[ns--];
-	for (m=1;m<n;m++) {
-		for (i=1;i<=n-m;i++) {
-			ho=xa[i]-x;
-			hp=xa[i+m]-x;
-			w=c[i+1]-d[i];
-			if ( (den=ho-hp) == 0.0){
-            	cout << "Error in routine polint\n";
-            	break;
-       		}
-			den=w/den;
-			d[i]=hp*den;
-		}
-		*y += (*dy=(2*ns < (n-m) ? c[ns+1] : d[ns--]));
-	}
-	delete [] d;
-	delete [] c;
 }

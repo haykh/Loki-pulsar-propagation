@@ -105,16 +105,6 @@ int main(int argc, char* argv[]) {
   ofstream output0(out_path + "/" + run_id + "_0.dat");
   ofstream output1(out_path + "/" + run_id + "_1.dat");
 
-  /*ofstream plot(out_path + "betadelta.dat");
-  PHI0 = 5.0 * constants::PI / 180.0;
-  findInitPoints(PHI0);
-  for (double r = 58.0; r <= 62.0; r += 0.1) {
-  	plot << r << " " << BetaB(r) + delta(r) << "\n";
-  	//plot << r << " " << cos(theta_kb(r)) << "\n";
-  }
-  plot.close();
-  return 0;*/
-
   // SIMULATION STARTS HERE />
 
   double phi_t_start = read_from_file(input_name, "phi_start");
@@ -127,20 +117,7 @@ int main(int argc, char* argv[]) {
 
     double x1, x2, dep_vars[2];
     x1 = 1.0;
-    // if (RESCAPE < 1000.0) x2 = 1500.0;
     x2 = 1.5 * Globals::RESCAPE;
-
-    // r_perpFromR (x1, x2);
-
-    /*string name1 = "theory_r_perp";
-	   ofstream output2(out_path + name1 + ".dat");
-	    double RR = x2;
-	     while(x1 < RR){
-		     output2 << RR << " " << psi_m(RR)/sqrt(NORM(vR(RR)))<< endl;
-		       RR = RR - 100.0;
-	        }
-          output2.close();
-    //cout << "r_perp for initial point from dipol: " << psi_m(x2)/sqrt(NORM(vR(x2))) << "\n" << endl;*/
 
     // Initial values />
     if (Globals::mode == 0) { // X-mode
@@ -170,8 +147,6 @@ int main(int argc, char* argv[]) {
 
     // cout << "\tI: " << II << "\n\tV: " << VV << "\n\tPA: " << -PA << endl << endl;
     output1 << phi_t << " " << II << " " << VV << " " << -PA << endl;
-
-    DelMas();
   }
   output0.close();
   output1.close();
