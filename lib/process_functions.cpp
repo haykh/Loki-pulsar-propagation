@@ -144,15 +144,12 @@ double BetaB (double R) {
 }
 
 double gFunc (double R) {
-  double Rr = NORM(vR(R));
-	double rperp = sin(psi_m(R)) * Rr / (Rr * sqrt(Rr / Globals::RLC));
-	double err;
-	double f = pow(rperp / sqrt(Globals::RLC), 2);
+  double f = pow(sin(psi_m(R)), 2) * Globals::RLC / NORM(vR(R));
 	double theta = ANGLE(vR(R), Globals::vOmega);
 	double dtheta = 5.0 * constants::PI / 180.0;
 	double gap = 1.0;
 	if (Globals::alpha_deg > 80)
-    gap = (1. - exp(-pow(constants::PI / 2.0 - theta, 2) / (2.0 * dtheta * dtheta)));
+    gap = (1. - exp(-pow(constants::PI * 0.5 - theta, 2) / (2.0 * dtheta * dtheta)));
 	return (pow(f, 2.5) * exp(-f * f) / (pow(f, 2.5) + pow(Globals::f0, 2.5))) * gap;
 }
 double Ne (double R) {

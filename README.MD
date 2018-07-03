@@ -27,6 +27,7 @@ $ ./loki -i loki.input -o my_output
 ### Things to do
 - Write density routine for any given ___B___-field.
 - Make initial radiation point for any given magnetic field (right now only takes dipole field, which is not bad, since we start close to the star).
+- Fix `Step size too small in routine RKQC` issue for high density plasma.
 
 ### Literature
 <a name="myfootnote1">1</a>: _A.S. Andrianov, V.S. Beskin_, [Limiting polarization effect—a key link in investigating the mean profiles of radio pulsars](https://link.springer.com/article/10.1134/S1063773710040031) __(2010)__

@@ -116,7 +116,7 @@ int main(int argc, char* argv[]) {
     findInitPoints (Globals::PHI0);
 
     double x1, x2, dep_vars[2];
-    x1 = 1.0;
+    x1 = 0.0;
     x2 = 1.5 * Globals::RESCAPE;
 
     // Initial values />
