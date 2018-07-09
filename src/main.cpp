@@ -51,6 +51,7 @@ int main(int argc, char* argv[]) {
     double x1, x2, dep_vars[2];
     x1 = 0.0;
     x2 = 1.5 * Globals::RESCAPE;
+    r_perpFromR (x1, x2);
 
     // Initial values />
     if (Globals::mode == 0) { // X-mode
