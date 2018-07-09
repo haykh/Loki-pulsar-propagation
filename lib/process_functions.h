@@ -21,7 +21,10 @@ double theta_kb (double R);
 /* NEW STUFF HERE /> */
 
 double r_perpFromR(double R1, double R2);
+vector <double> vBdipoleXYZ(vector <double> r, vector <double> m);
+vector <double> vBsplitXYZ (vector <double> r);
 vector <double> Bxyz(vector <double> r, vector <double> m);
-void polint(double xa[], double ya[], int n, double x, double *y, double *dy);
+void spline(double x[], double y[], int n, double yp1, double ypn, double y2[]);
+void splint(double xa[], double ya[], double y2a[], int n, double x, double *y);
 void CreateMas(int N);
 void DelMas();
