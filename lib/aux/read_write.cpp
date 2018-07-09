@@ -10,7 +10,7 @@
 #include <iterator>
 using namespace std;
 
-#include "constants.h"
+#include "../constants.h"
 #include "read_write.h"
 
 void throw_error(const string msg) {

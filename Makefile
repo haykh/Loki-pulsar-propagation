@@ -1,4 +1,4 @@
-FILES = src/*.cpp lib/*.cpp
+FILES = src/*.cpp lib/*.cpp lib/aux/*.cpp
 
 CC = g++
 CFLAGS = -std=c++14

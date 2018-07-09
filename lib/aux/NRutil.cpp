@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
+
 #include "NRutil.h"
+
 #define NR_END 1
 #define FREE_ARG char*
 

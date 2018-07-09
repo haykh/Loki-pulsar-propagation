@@ -9,24 +9,20 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <math.h>
 
 using namespace std;
 
 #include "../lib/constants.h"
-#include "../lib/read_write.h"
+#include "../lib/aux/read_write.h"
+#include "../lib/b_field.h"
 
-#include "../lib/functions.h"
+#include "../lib/aux/functions.h"
 #include "../lib/process_functions.h"
 #include "../lib/initialize.h"
 
-#include "../lib/integrator.h"
+#include "../lib/aux/integrator.h"
 #include "../lib/RHS.h"
-
-/*
-  Default libraries
-*/
-#include "../lib/diffeqsolver.h"
+#include "../lib/aux/diffeqsolver.h"
 
 void displayVector (vector <double> a) {
     cout << endl << a[0] << endl << a[1] << endl << a[2] << endl;

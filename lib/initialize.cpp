@@ -7,9 +7,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "read_write.h"
+
+#include "aux/read_write.h"
+#include "aux/functions.h"
 #include "constants.h"
-#include "functions.h"
 #include "initialize.h"
 using namespace std;
 

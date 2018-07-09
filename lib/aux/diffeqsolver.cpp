@@ -3,9 +3,10 @@
 #include <vector>
 #include <fstream>
 #include <string>
+
 #include "diffeqsolver.h"
 #include "NRutil.h"
-#include "process_functions.h"
+#include "../process_functions.h"
 using namespace std;
 
 void rk4(double *y, double *dydx, int n, double x, double h, double *yout, void (*derivs)(double, double *, double *)) {
