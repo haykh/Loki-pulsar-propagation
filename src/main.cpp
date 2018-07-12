@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
 
     cout << "\tI: " << II << "\n\tV: " << VV << "\n\tPA: " << -PA << endl << endl;
     output1 << phi_t << " " << II << " " << VV << " " << -PA << endl;
-    
+
     #ifdef INTBACK
       delete[] pcdens::rps;
       delete[] pcdens::Rs;
