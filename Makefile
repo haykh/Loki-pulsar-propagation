@@ -4,7 +4,7 @@ CC = g++
 CFLAGS = -std=c++14
 MPICC = mpic++ -DMPI
 
-FLAGS = -DINTBACK
+FLAGS =# -DINTBACK
 
 all:
 	mkdir -p bin

@@ -53,7 +53,6 @@ int main(int argc, char* argv[]) {
   double phi_t_step = read_from_file(Globals::input_name, "phi_step");
 
   #ifdef MPI
-    int total_steps = (int)((phi_t_end - phi_t_start) / phi_t_step) + 1;
     vector <vector <double> > steps_rank(mpi::size);
     int rnk = 0;
     for (double phi_t = phi_t_start; phi_t <= phi_t_end; phi_t += phi_t_step) {
@@ -68,7 +67,7 @@ int main(int argc, char* argv[]) {
   #endif
 
   #ifndef MPI
-    for (double phi_t = phi_t_start; phi_t <= phi_t_end; phi_t += phi_t_step) { // Phase switch
+    for (double phi_t = phi_t_start; phi_t <= phi_t_end; phi_t += phi_t_step) {
       cout << "PHI: " << phi_t << endl;
   #else
     for (auto phi_t : steps_rank[mpi::rank]) {
