@@ -34,6 +34,11 @@ void displayVector (vector <double> a) {
 }
 
 int main(int argc, char* argv[]) {
+  #ifdef MPI
+    MPI_Init (&argc, &argv);
+    MPI_Comm_size (MPI_COMM_WORLD, &mpi::size);
+    MPI_Comm_rank (MPI_COMM_WORLD, &mpi::rank);
+  #endif
   initialize(argc, argv);
 
   string fname0_ = Globals::out_path + "/" + Globals::RUN_ID + "_0.out";
@@ -41,10 +46,6 @@ int main(int argc, char* argv[]) {
   #ifndef MPI
     ofstream output0(fname0_);
     ofstream output1(fname1_);
-  #else
-    MPI_Init (&argc, &argv);
-    MPI_Comm_size (MPI_COMM_WORLD, &mpi::size);
-    MPI_Comm_rank (MPI_COMM_WORLD, &mpi::rank);
   #endif
 
   double phi_t_start = read_from_file(Globals::input_name, "phi_start");

@@ -136,7 +136,7 @@ void initialize(int argc, char* argv[]) {
   string MODE;
   if (Globals::mode == 0) MODE = "X-mode";
   else MODE = "O-mode";
-
+  
   #ifdef MPI
     if (mpi::rank == 0) {
   #endif
