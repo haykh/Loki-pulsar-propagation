@@ -83,9 +83,9 @@ int main(int argc, char* argv[]) {
       x2 = 2. * Globals::RESCAPE;
 
       #ifdef INTBACK
-        cout << "Calculating r_perp(R) array...\n";
+        user_cout("Calculating r_perp(R) array...\n");
         rpFromR (Globals::RLC);
-        cout << "r_perp(R) array done.\n";
+        user_cout("r_perp(R) array done.\n");
       #endif
 
       if (Globals::mode == 0) { // X-mode
@@ -112,13 +112,9 @@ int main(int argc, char* argv[]) {
         buffer0[buff_step+3] = PA;
       #endif
 
-      #ifndef MPI
-        cout << "Solving ODE...\n";
-      #endif
+      user_cout("Solving ODE...\n");
       odeint(dep_vars, 2, x1, x2, 1.0, 1e-14, 1e-15, 0, 0, RHS);
-      #ifndef MPI
-        cout << "ODE done.\n";
-      #endif
+      user_cout("ODE done.\n");
 
       VV = II * tanh(2.0 * dep_vars[1]);
       PA = dep_vars[0] * 180.0 / constants::PI;

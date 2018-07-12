@@ -8,3 +8,5 @@ string read_from_file_str (string input_name, const string param, const string d
 void read_in_out(string &in, string &out, int argc, char* argv[]);
 
 void print_progress (double x, int progress_size, const string prepend);
+
+void user_cout (const string msg);

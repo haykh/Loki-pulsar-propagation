@@ -136,3 +136,9 @@ void print_progress (double x, int progress_size, const string prepend) {
   std::cout << " " << int(100. * x) << "%" << "\r";
   std::cout.flush();
 }
+
+void user_cout (const string msg) {
+  #ifndef MPI
+    std::cout << msg << "\n";
+  #endif
+}
