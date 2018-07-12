@@ -119,8 +119,6 @@ void read_in_out(string &in, string &out, int argc, char* argv[]) {
 	}
   if (!found_input) {
     throw_error("ERROR: No input file given.");
-  } else {
-    cout << "INPUT: " << in << "\n";
   }
   if (!found_output) {
     out = "output";

@@ -19,3 +19,9 @@ void findInitPoints (double PHI0);
 void define_Globals();
 
 void initialize(int argc, char* argv[]);
+
+#ifdef MPI
+  namespace mpi {
+    extern int rank, size, offset;
+  }
+#endif

@@ -1,5 +1,5 @@
 # Folders #
-bin/data/
+bin/
 
 # DAT files #
 *.dat
@@ -9,7 +9,6 @@ bin/data/
 *.png
 
 # Python
-*.py
 *.pyc
 *.ipynb
 

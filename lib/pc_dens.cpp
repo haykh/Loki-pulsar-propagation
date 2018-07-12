@@ -73,8 +73,6 @@
     std::vector <double> vm_, rups_;
     double euler_step = 0.01 * (Globals::RLC / 5000.0);
 
-    std::cout << "\tstepsize: " << euler_step << std::endl;
-
     while (rup >= 0.0) {
       rups_.push_back(rup);
       rup -= (rup > (Globals::RLC / 5.)) ? (Globals::RLC / 50.) : ((Globals::RLC / 50.) ? (Globals::RLC / 500.) : (Globals::RLC / 1000.));
@@ -87,7 +85,9 @@
 
     for (int i = 0; i < pcdens::N; i++) {
       rup = rups_[pcdens::N - i - 1];
-      print_progress(rup / Rmax, 26, "\t");
+      #ifndef MPI
+        print_progress(rup / Rmax, 26, "\t");
+      #endif
     	vm_ = vMoment(rup);
       pcdens::Rs[i] = rup;
       pcdens::rps[i] = sin(ANGLE(euler_3d (vR(rup), vb_XYZ, vm_, euler_step), vm_));
