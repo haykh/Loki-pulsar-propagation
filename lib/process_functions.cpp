@@ -3,14 +3,15 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include "read_write.h"
-#include "constants.h"
-#include "functions.h"
-#include "process_functions.h"
-#include "initialize.h"
-using namespace std;
 
-// most of functions should be local
+#include "aux/read_write.h"
+#include "aux/functions.h"
+#include "constants.h"
+#include "process_functions.h"
+#include "b_field.h"
+#include "initialize.h"
+#include "pc_dens.h"
+using namespace std;
 
 double sgn (double value) {
   if (value >= 0.0) {
@@ -41,49 +42,6 @@ vector <double> vR (double R) {
 } // Propagation radius vector
 double psi_m (double R) {
   return ANGLE(vR(R), vMoment(R));
-}
-
-vector <double> vBdipole (double R) {
-  vector <double> m;
-  vector <double> n;
-  m = vMoment (R);
-  n = NORMALIZE(vR(R));
-  return SUM(TIMES(3.0 * SCALAR(m, n), n), TIMES(-1.0, m));
-}
-vector <double> vBsplit (double R) {
-  double Rr = NORM(vR(R));
-  double Rxy = sqrt(vR(R)[0] * vR(R)[0] + vR(R)[1] * vR(R)[1]);
-
-  double costh = SCALAR(NORMALIZE(vR(R)), NORMALIZE(Globals::vOmega));
-  double sinth = sqrt(1 - costh * costh);
-  double cosphi = vR(R)[0] / Rxy;
-  double sinphi = vR(R)[1] / Rxy;
-  double phi = acos (cosphi);
-
-  double psi1 = costh * cos(Globals::alpha) + sinth * sin(Globals::alpha) * cos(phi - Globals::PHI0 + Rr / Globals::RLC);
-
-  double Br = (Globals::fr / (Rr * Rr * Globals::RLC)); // * tanh(psi1 / 0.1);
-  double Bphi = -(Globals::fphi * Globals::fr * sinth / (Rr * Globals::RLC * Globals::RLC)); // * tanh(psi1 / 0.1);
-
-  Br *= pow(Rr, 3);
-  Bphi *= pow(Rr, 3);
-
-  vector <double> temp(3);
-  temp[0] = Br * sinth * cosphi - Bphi * sinphi;
-  temp[1] = Br * sinth * sinphi + Bphi * cosphi;
-  temp[2] = Br * costh;
-  return temp;
-}
-
-vector <double> vB (double R) {
-  if (Globals::fphi == 0 && Globals::fr == 0) {
-    return vBdipole(R);
-  } else {
-    return SUM(vBsplit(R), vBdipole(R));
-  }
-}
-vector <double> vb (double R) {
-  return NORMALIZE(vB(R));
 }
 
 double theta_kb (double R) {
@@ -143,15 +101,6 @@ double BetaB (double R) {
   return atan(by / bx);
 }
 
-double gFunc (double R) {
-  double f = pow(sin(psi_m(R)), 2) * Globals::RLC / NORM(vR(R));
-	double theta = ANGLE(vR(R), Globals::vOmega);
-	double dtheta = 5.0 * constants::PI / 180.0;
-	double gap = 1.0;
-	if (Globals::alpha_deg > 80)
-    gap = (1. - exp(-pow(constants::PI * 0.5 - theta, 2) / (2.0 * dtheta * dtheta)));
-	return (pow(f, 2.5) * exp(-f * f) / (pow(f, 2.5) + pow(Globals::f0, 2.5))) * gap;
-}
 double Ne (double R) {
   double nGJ = SCALAR(Globals::vOmega, vB(R)) * (Globals::B0 / pow(NORM(vR(R)), 3)) / (2 * constants::PI * constants::c * constants::e);
   return Globals::lambda * gFunc (R) * nGJ;

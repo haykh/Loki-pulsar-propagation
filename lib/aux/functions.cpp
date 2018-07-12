@@ -1,5 +1,6 @@
 #include <vector>
 #include <math.h>
+
 #include "functions.h"
 using namespace std;
 
