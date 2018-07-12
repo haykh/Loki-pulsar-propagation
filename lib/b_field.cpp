@@ -7,13 +7,13 @@
 #include "process_functions.h"
 
 
-vector <double> vBdipole_XYZ(vector <double> r, vector <double> m){
-	vector <double> n(3);
+std::vector <double> vBdipole_XYZ(std::vector <double> r, std::vector <double> m){
+	std::vector <double> n(3);
 	n = NORMALIZE(r);
   return SUM(TIMES(3.0 * SCALAR(m, n), n), TIMES(-1.0, m));
 }
 
-vector <double> vBsplit_XYZ (vector <double> r) {
+std::vector <double> vBsplit_XYZ (std::vector <double> r) {
   double Rr = NORM(r);
   double Rxy = sqrt(r[0] * r[0] + r[1] * r[1]);
 
@@ -31,36 +31,36 @@ vector <double> vBsplit_XYZ (vector <double> r) {
   Br *= pow(Rr, 3);
   Bphi *= pow(Rr, 3);
 
-  vector <double> temp(3);
+  std::vector <double> temp(3);
   temp[0] = Br * sinth * cosphi - Bphi * sinphi;
   temp[1] = Br * sinth * sinphi + Bphi * cosphi;
   temp[2] = Br * costh;
   return temp;
 }
 
-vector <double> vB_XYZ(vector <double> r, vector <double> m) {
+std::vector <double> vB_XYZ(std::vector <double> r, std::vector <double> m) {
 	if (Globals::fphi == 0 && Globals::fr == 0) {
-    	return vBdipole_XYZ(r,m);
+    return vBdipole_XYZ(r, m);
 	} else {
 		return SUM(vBsplit_XYZ(r), vBdipole_XYZ(r,m));
 	}
 }
 
-vector <double> vBdipole (double R) {
+std::vector <double> vb_XYZ(std::vector <double> r, std::vector <double> m) {
+  return NORMALIZE(vB_XYZ(r, m));
+}
+
+std::vector <double> vBdipole (double R) {
   return vBdipole_XYZ(vR(R), vMoment(R));
 }
 
-vector <double> vBsplit (double R) {
+std::vector <double> vBsplit (double R) {
   return vBsplit_XYZ(vR(R));
 }
 
-vector <double> vB (double R) {
-  if (Globals::fphi == 0 && Globals::fr == 0) {
-    return vBdipole(R);
-  } else {
-    return SUM(vBsplit(R), vBdipole(R));
-  }
+std::vector <double> vB (double R) {
+  return vB_XYZ(vR(R), vMoment(R));
 }
-vector <double> vb (double R) {
+std::vector <double> vb (double R) {
   return NORMALIZE(vB(R));
 }

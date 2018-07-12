@@ -1,8 +1,11 @@
+#include <iostream>
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string>
 
 #include "NRutil.h"
+#include "read_write.h"
 
 #define NR_END 1
 #define FREE_ARG char*
@@ -36,4 +39,24 @@ double **Nmatrix(long nrl, long nrh, long ncl, long nch)
 
   /* return pointer to array of pointers to rows */
   return m;
+}
+
+double interpolate (double xData[], double yData[], int size, double x, bool extrapolate) {
+  if ((x > xData[size-1]) || (x < xData[0])) {
+    std::cout << "xmin: " << xData[0] << " | xmax: " << xData[size-1] << " | x: " << x << std::endl;
+    throw_error("ERROR: x out of range called in interpolate.");
+  }
+  int i = 0;
+  if (x >= xData[size - 2]) {
+    i = size - 2;
+  } else {
+    while (x > xData[i+1]) i++;
+  }
+  double xL = xData[i], yL = yData[i], xR = xData[i+1], yR = yData[i+1];
+  if (!extrapolate) {
+    if (x < xL) yR = yL;
+    if (x > xR) yL = yR;
+  }
+  double dydx = ( yR - yL ) / ( xR - xL );
+  return yL + dydx * ( x - xL );
 }

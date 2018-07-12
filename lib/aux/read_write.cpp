@@ -126,3 +126,15 @@ void read_in_out(string &in, string &out, int argc, char* argv[]) {
     out = "output";
   }
 }
+
+void print_progress (double x, int progress_size, const string prepend) {
+  std::cout << prepend;
+  for (int j = 0; j < int(x * progress_size); j++) {
+    std::cout << "▓▓";
+  }
+  for (int j = x * progress_size; j < progress_size; j ++) {
+    std::cout << "--";
+  }
+  std::cout << " " << int(100. * x) << "%" << "\r";
+  std::cout.flush();
+}

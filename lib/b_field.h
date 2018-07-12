@@ -1,6 +1,7 @@
 #pragma B_FIELD
 
-vector <double> vB_XYZ(vector <double> r, vector <double> m);
+std::vector <double> vB_XYZ(std::vector <double> r, std::vector <double> m);
+std::vector <double> vb_XYZ(std::vector <double> r, std::vector <double> m);
 
-vector <double> vB (double R);
-vector <double> vb (double R);
+std::vector <double> vB (double R);
+std::vector <double> vb (double R);
