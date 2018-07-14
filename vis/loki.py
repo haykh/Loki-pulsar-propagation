@@ -1,3 +1,14 @@
+# This module can be imported by doing:
+# ```
+#   import imp
+#   loki_read = imp.load_source('loki_read', 'path/to/loki/vis/loki.py')
+# ```
+#
+# Then called:
+# ```
+#   loki_read.loki_read('myoutput.out')
+# ```
+
 import struct
 import numpy as np
 
