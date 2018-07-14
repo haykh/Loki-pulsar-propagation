@@ -103,6 +103,10 @@ int main(int argc, char* argv[]) {
       double tau = constants::PI * constants::R_star * integrate(dtau, x1, Globals::RLC) / (constants::c * Globals::omega);
       double II0 = gFunc(x1);
       double II = II0 * exp (-tau);
+      if isnan(II) {
+        msg << "ERROR: `nan` found in II0 or tau: " << II0 << " " << tau << "\n";
+        throw_error(msg.str());
+      }
 
       double VV = II * tanh(2.0 * dep_vars[1]);
       #ifndef MPI
@@ -115,7 +119,7 @@ int main(int argc, char* argv[]) {
       #endif
 
       user_cout("Solving ODE...\n");
-      // odeint(dep_vars, 2, x1, x2, 1.0, 1e-14, 1e-15, 0, 0, RHS);
+      odeint(dep_vars, 2, x1, x2, 1.0, 1e-14, 1e-15, 0, 0, RHS);
       user_cout("ODE done.\n");
 
       VV = II * tanh(2.0 * dep_vars[1]);
