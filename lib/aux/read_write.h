@@ -10,3 +10,7 @@ void read_in_out(string &in, string &out, int argc, char* argv[]);
 void print_progress (double x, int progress_size, const string prepend);
 
 void user_cout (const string msg);
+
+#ifdef MPI
+  void mpi_write (const char* fname, double buffer[], int size, int offset);
+#endif

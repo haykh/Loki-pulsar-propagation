@@ -5,20 +5,18 @@
 #include <fstream>
 #include <sstream>
 #include <typeinfo>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #ifdef MPI
   #include "mpi.h"
 #endif
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 using namespace std;
 
 #include "../lib/constants.h"
 #include "../lib/aux/read_write.h"
-#include "../lib/b_field.h"
 
 #include "../lib/aux/functions.h"
 #include "../lib/process_functions.h"
@@ -27,11 +25,7 @@ using namespace std;
 
 #include "../lib/aux/integrator.h"
 #include "../lib/RHS.h"
-#include "../lib/aux/diffeqsolver.h"
-
-void displayVector (vector <double> a) {
-  cout << endl << a[0] << endl << a[1] << endl << a[2] << endl;
-}
+#include "../lib/aux/dsolve.h"
 
 int main(int argc, char* argv[]) {
   stringstream msg;
@@ -85,9 +79,9 @@ int main(int argc, char* argv[]) {
       x2 = 2. * Globals::RESCAPE;
 
       #ifdef INTBACK
-        user_cout("Calculating r_perp(R) array...\n");
+        user_cout("Calculating r_perp(R) array...");
         rpFromR (Globals::RLC);
-        user_cout("r_perp(R) array done.\n");
+        user_cout("r_perp(R) array done.");
       #endif
 
       if (Globals::mode == 0) { // X-mode
@@ -103,10 +97,6 @@ int main(int argc, char* argv[]) {
       double tau = constants::PI * constants::R_star * integrate(dtau, x1, Globals::RLC) / (constants::c * Globals::omega);
       double II0 = gFunc(x1);
       double II = II0 * exp (-tau);
-      if isnan(II) {
-        msg << "ERROR: `nan` found in II0 or tau: " << II0 << " " << tau << "\n";
-        throw_error(msg.str());
-      }
 
       double VV = II * tanh(2.0 * dep_vars[1]);
       #ifndef MPI
@@ -118,9 +108,9 @@ int main(int argc, char* argv[]) {
         buffer0[buff_step+3] = PA;
       #endif
 
-      user_cout("Solving ODE...\n");
-      odeint(dep_vars, 2, x1, x2, 1.0, 1e-14, 1e-15, 0, 0, RHS);
-      user_cout("ODE done.\n");
+      user_cout("Solving ODE...");
+      dsolve(dep_vars, x1, x2, RHS);
+      user_cout("ODE done.");
 
       VV = II * tanh(2.0 * dep_vars[1]);
       PA = dep_vars[0] * 180.0 / constants::PI;
@@ -134,6 +124,11 @@ int main(int argc, char* argv[]) {
         buffer1[buff_step+3] = PA;
         buff_step += 4;
       #endif
+      if (isnan(VV) || isnan(PA)) {
+        msg << "ERROR: `nan` found in VV or PA: " << VV << " " << PA << "\n";
+        msg << "\tPHI0 " << phi_t << "\n";
+        throw_error(msg.str());
+      }
 
       #ifdef INTBACK
         delete[] pcdens::rps;
@@ -144,22 +139,8 @@ int main(int argc, char* argv[]) {
     output0.close();
     output1.close();
   #else
-    MPI_Status status;
-
-    MPI_File output0;
-    MPI_File_open(MPI_COMM_WORLD, fname0_.c_str(),
-                MPI_MODE_CREATE|MPI_MODE_WRONLY,
-                MPI_INFO_NULL, &output0);
-    MPI_File_write_at(output0, mpi::offset, buffer0, steps_rank[mpi::rank].size() * 4, MPI_DOUBLE, &status);
-  	MPI_File_close (&output0);
-
-    MPI_File output1;
-    MPI_File_open(MPI_COMM_WORLD, fname1_.c_str(),
-        MPI_MODE_CREATE|MPI_MODE_WRONLY,
-        MPI_INFO_NULL, &output1);
-    MPI_File_write_at(output1, mpi::offset, buffer1, steps_rank[mpi::rank].size() * 4, MPI_DOUBLE, &status);
-  	MPI_File_close (&output1);
-
+    mpi_write (fname0_.c_str(), buffer0, steps_rank[mpi::rank].size() * 4, mpi::offset);
+    mpi_write (fname1_.c_str(), buffer1, steps_rank[mpi::rank].size() * 4, mpi::offset);
   	MPI_Finalize ();
   #endif
 	return 0;

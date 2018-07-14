@@ -92,7 +92,7 @@
       pcdens::Rs[i] = rup;
       pcdens::rps[i] = sin(ANGLE(euler_3d (vR(rup), vb_XYZ, vm_, euler_step), vm_));
     }
-    user_cout("\n");
+    user_cout("");
 
     struct stat st = {0};
     std::string foldername = filename.substr (0, filename.find("/"));
@@ -132,10 +132,10 @@
   void rpFromR (double Rmax) {
     std::string fname;
     if (check_rpFromR(fname)) {
-      user_cout("\t`rpFromR` file found. Reading...\n");
+      user_cout("\t`rpFromR` file found. Reading...");
       read_rpFromR (fname);
     } else {
-      user_cout("\tNo `rpFromR` file found. Computing and writing...\n");
+      user_cout("\tNo `rpFromR` file found. Computing and writing...");
       fill_rpFromR (fname, Rmax);
     }
   }

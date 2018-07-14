@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 
-#include "diffeqsolver.h"
+#include "rk4.h"
 #include "NRutil.h"
 #include "../process_functions.h"
 using namespace std;
@@ -48,7 +48,7 @@ void rk4(double *y, double *dydx, int n, double x, double h, double *yout, void 
 #define ERRCON 1.89e-4
 #define HMAX 10.0
 
-#define MAXSTP 10000 // normally 10000
+#define MAXSTP 100000 // normally 10000
 #define TINY 1.0e-30
 
 void rkqc(

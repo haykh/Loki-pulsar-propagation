@@ -8,6 +8,11 @@
 #include <sstream>
 #include <algorithm>
 #include <iterator>
+
+#ifdef MPI
+  #include "mpi.h"
+#endif
+
 using namespace std;
 
 #include "../constants.h"
@@ -142,3 +147,15 @@ void user_cout (const string msg) {
     std::cout << msg << "\n";
   #endif
 }
+
+#ifdef MPI
+  void mpi_write (const char* fname, double buffer[], int size, int offset) {
+    MPI_Status status;
+    MPI_File output;
+    MPI_File_open(MPI_COMM_WORLD, fname,
+                MPI_MODE_CREATE|MPI_MODE_WRONLY,
+                MPI_INFO_NULL, &output);
+    MPI_File_write_at(output, offset, buffer, size, MPI_DOUBLE, &status);
+    MPI_File_close (&output);
+  }
+#endif
