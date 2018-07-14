@@ -34,6 +34,7 @@ void displayVector (vector <double> a) {
 }
 
 int main(int argc, char* argv[]) {
+  stringstream msg;
   #ifdef MPI
     MPI_Init (&argc, &argv);
     MPI_Comm_size (MPI_COMM_WORLD, &mpi::size);
@@ -59,8 +60,10 @@ int main(int argc, char* argv[]) {
       steps_rank[rnk % mpi::size].push_back(phi_t);
       rnk ++;
     }
-    if (mpi::rank == 0) mpi::offset = 0;
-    else mpi::offset = mpi::rank * (steps_rank[mpi::rank - 1].size() * 4) * sizeof(double);
+    mpi::offset = 0;
+    for (int i = 0; i < mpi::rank; i++)
+      mpi::offset += steps_rank[i].size();
+    mpi::offset *= 4 * sizeof(double);
     double *buffer0 = new double [steps_rank[mpi::rank].size() * 4];
     double *buffer1 = new double [steps_rank[mpi::rank].size() * 4];
     int buff_step = 0;
@@ -112,7 +115,7 @@ int main(int argc, char* argv[]) {
       #endif
 
       user_cout("Solving ODE...\n");
-      odeint(dep_vars, 2, x1, x2, 1.0, 1e-14, 1e-15, 0, 0, RHS);
+      // odeint(dep_vars, 2, x1, x2, 1.0, 1e-14, 1e-15, 0, 0, RHS);
       user_cout("ODE done.\n");
 
       VV = II * tanh(2.0 * dep_vars[1]);
