@@ -60,7 +60,7 @@ import numpy as np
 data = np.loadtxt("<output_file>")
 ```
 
-In MPI run the file is written in binary format and should be treated differently. `vis/` folder in this repository contains a library to read the binary data. Import the `loki` module (`loki.py` file should be in the same directory as the python file or jupyter notebook) and read the data as follows:
+In MPI run the file is written in a binary format and should be treated differently. `vis/` folder in this repository contains a library to read the binary data. Import the `loki` module (`loki.py` file should be in the same directory as the python file or jupyter notebook) and read the data as follows:
 ```python
 import loki
 data = loki.loki_read("<output_file>")

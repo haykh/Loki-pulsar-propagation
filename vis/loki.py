@@ -62,6 +62,6 @@ def fix_PA(PA_data, threshold = 300):
     """
     new_PA_data = np.copy(PA_data)
     for i in range(1, len(new_PA_data)):
-        if np.abs(new_PA_data[i - 1] - new_PA_data[i]) > threshold:
-            new_PA_data[i] -= 360
+        while np.abs(new_PA_data[i - 1] - new_PA_data[i]) > threshold:
+            new_PA_data[i] += np.sign(new_PA_data[i - 1] - new_PA_data[i]) * 360
     return new_PA_data
