@@ -31,11 +31,11 @@ Theoretical basis for the program is given in the following papers <sup>[1](#myf
 * The input file name is specified with a flag when running the code `... -i loki.input`.
 * Output path is specified with the `-o` flag, default value is "output/".
 3. Run the code as follows:
-```
+```bash
 $ ./loki -i loki.input
 ```
 or for MPI version:
-```
+```bash
 $ mpiexec -n <# of cpu> loki -i loki.input
 ```
 
@@ -45,11 +45,31 @@ $ make all
 $ cd bin
 $ ./loki -i loki.input -o my_output
 ```
+or
+```bash
+$ make mpi
+$ cd bin
+$ mpiexec -n 16 loki -i loki.input -o my_mpi_output
+```
+
+### Visualization
+
+For a non-MPI run the output is written in a standard `utf-8` encoding and can be directly read in python as follows:
+```python
+import numpy as np
+data = np.loadtxt("<output_file>")
+```
+
+In MPI run the file is written in binary format and should be treated differently. `vis/` folder in this repository contains a library to read the binary data. Import the `loki` module (`loki.py` file should be in the same directory as the python file or jupyter notebook) and read the data as follows:
+```python
+import loki
+data = loki.loki_read("<output_file>")
+```
 
 ### Things to do
-- Write density routine for any given ___B___-field.
 - Make initial radiation point for any given magnetic field (right now only takes dipole field, which is not bad, since we start close to the star).
-- Fix `Step size too small in routine RKQC` issue for high density plasma.
+- Fix `Step size too small in routine RKQC` issue and `nan`-s for high density plasma.
+- Read `hdf5` __b__-field data.
 
 ### Literature
 <a name="myfootnote1">1</a>: _A.S. Andrianov, V.S. Beskin_, [Limiting polarization effect—a key link in investigating the mean profiles of radio pulsars](https://link.springer.com/article/10.1134/S1063773710040031) __(2010)__
