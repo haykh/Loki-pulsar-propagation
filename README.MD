@@ -79,7 +79,9 @@ $ git checkout branch_A # <- switch back to branch_A
 $ git stash apply # <- get your stashed files back on branch_A
 ```
 
-> BONUS. To see the active branch in your terminal with a highlighted color, you can add this to your `~/.bash_profile` file, save and then restart your terminal:
+---
+
+__BONUS.__ To see the active branch in your terminal with a highlighted color, you can add this to your `~/.bash_profile` file, save and then restart your terminal:
 ```bash
 parse_git_branch() {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1) /'
