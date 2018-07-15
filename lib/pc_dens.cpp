@@ -75,7 +75,7 @@
 
     while (rup >= 0.0) {
       rups_.push_back(rup);
-      rup -= (rup > (Globals::RLC / 5.)) ? (Globals::RLC / 50.) : ((Globals::RLC / 50.) ? (Globals::RLC / 500.) : (Globals::RLC / 1000.));
+      rup -= (rup > (Globals::RLC / 5.)) ? (Globals::RLC / 50.) : ((rup > (Globals::RLC / 50.)) ? (Globals::RLC / 500.) : (Globals::RLC / 1000.));
     }
     rups_.push_back(0.0);
 

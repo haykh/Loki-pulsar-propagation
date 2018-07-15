@@ -640,6 +640,7 @@ int r4_rkf45 ( void f ( float t, float y[], float yp[] ), int neqn,
         cerr << "  Integration cannot be continued.\n";
         cerr << "  The user did not respond to the output\n";
         cerr << "  value FLAG = 5, 6, 7, or 8.\n";
+        cerr << "  prev flag = " << flag << ".\n";
         exit ( 1 );
       }
     }
@@ -756,7 +757,7 @@ int r4_rkf45 ( void f ( float t, float y[], float yp[] ), int neqn,
 //
 //  Unnecessary frequency of output.
 //
-  if ( kop == 100 )
+  if ( kop == 10000 )
   {
     kop = 0;
     delete [] f1;
@@ -941,6 +942,7 @@ int r4_rkf45 ( void f ( float t, float y[], float yp[] ), int neqn,
       }
 
       h = s * h;
+      // h = (h < hmin) ? hmin : h;
 
       if ( r4_abs ( h ) < hmin )
       {
@@ -1814,7 +1816,7 @@ int r8_rkf45 ( void f ( double t, double y[], double yp[] ), int neqn,
 //
 //  Unnecessary frequency of output.
 //
-  if ( kop == 100 )
+  if ( kop == 10000 )
   {
     kop = 0;
     delete [] f1;

@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
 
       // Initial values & limits />
       double x1, x2, dep_vars[2];
-      x1 = 10.0;
+      x1 = 0.1;
       x2 = 2. * Globals::RESCAPE;
 
       #ifdef INTBACK
@@ -110,6 +110,8 @@ int main(int argc, char* argv[]) {
 
       user_cout("Solving ODE...");
       dsolve(dep_vars, x1, x2, RHS);
+      // dsolve_r4_rkf45(dep_vars, x1, x2, RHS_float);
+      // dsolve_r8_rkf45(dep_vars, x1, x2, RHS);
       user_cout("ODE done.");
 
       VV = II * tanh(2.0 * dep_vars[1]);
