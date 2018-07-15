@@ -36,7 +36,7 @@ $ ./loki -i loki.input
 ```
 or for MPI version:
 ```bash
-$ mpiexec -n <# of cpu> loki -i loki.input
+$ mpiexec -n <number of CPUs> loki -i loki.input
 ```
 
 #### Example run:
