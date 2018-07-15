@@ -5,11 +5,21 @@ Theoretical basis for the program is given in the following papers <sup>[1](#myf
 <sup>[2](#myfootnote2)</sup> <sup>[3](#myfootnote3)</sup>.
 
 ### Libraries description
-`lib` folder contains all the necessary libraries.
-* `Nrutil.h` and `diffeqsolver.h` are from "Numerical Recipes in C" <sup>[4](#myfootnote4)</sup> textbook and contain everything to solve nonlinear ODE with rk4 routine.
-* `integrator.h` is a custom one dimensional function integrator. `functions.h` contains custom functions for vector algebra.
-* All the physical functions involved are in `process_functions.h` and the right-hand side of the ODE is written in `RHS.h`. `initialize.h` is to store some of the initialization routines used, such as finding the radiation point.
-* `constants.h` is to store all the necessary constants within the `constants::` namespace.
+`lib/`:
+* `constants.h`: stores all the necessary constants within the `constants::` namespace;
+* `initialize.h`: some of the initialization routines used, such as finding the radiation point, reading input etc;
+* `process_functions.h`: all the physical functions involved;
+* `b_field.h`: functions to find the magnetic field for a given point;
+* `RHS.h`: the right-hand side of the ODE (both in `float` and `double`);
+* `pc_dens.h`: back integration routine to find the density on a polar cap for any given point on a ray trajecoty.
+`lib/aux/`:
+* `read_write.h`: reading and writing routines;
+* `functions.h`: custom functions for vector algebra;
+* `integrator.h`: custom 1d function integrator;
+* `NRutil.h`: all auxiliary structures and interpolation function;
+* `dsolve.h`: some Runge-Kutta solvers (partly from "Numerical Recipes in C" <sup>[4](#myfootnote4)</sup> textbook) to solve nonlinear ODE with rk4, rkf45 and rk8 routines;
+* `rk4.h`, `rkf45.h`: rk routines.
+
 
 ### Running
 * Compile with `make all` in the root directory, the executable is generated in the `bin/` directory.
