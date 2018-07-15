@@ -19,7 +19,7 @@ Theoretical basis for the program is given in the following papers <sup>[1](#myf
 * `functions.h`: custom functions for vector algebra;
 * `integrator.h`: custom 1d function integrator;
 * `NRutil.h`: all auxiliary structures and interpolation function;
-* `dsolve.h`: some Runge-Kutta solvers (partly from "Numerical Recipes in C" <sup>[4](#myfootnote4)</sup> textbook) to solve nonlinear ODE with rk4, rkf45 and rk8 routines;
+* `dsolve.h`: some Runge-Kutta solvers (partly from "Numerical Recipes in C" <sup>[4](#myfootnote4)</sup> textbook and from [here](https://people.sc.fsu.edu/~jburkardt/c_src/)) to solve nonlinear ODE with rk4, rkf45 and rk8 routines;
 * `rk4.h`, `rkf45.h`: rk routines.
 
 
