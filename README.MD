@@ -23,11 +23,21 @@ Theoretical basis for the program is given in the following papers <sup>[1](#myf
 * `rk4.h`, `rkf45.h`: rk routines.
 
 
-### Running
-* Compile with `make all` in the root directory, the executable is generated in the `bin/` directory.
-* The input parameters are passed with the `loki.input` file, from the same directory as the executable file.
-* The input file name is specified with a flag when running the code `./loki -i loki.input`.
+### Compiling and running
+1. Compile with `make all` or `make mpi` in the root directory, the executable is generated in the `bin/` directory.
+* `make mpi` compiles an MPI version of the code with a flag `MPI`.
+* There is a custom flag `INTBACK` that enables back integration to find the polar cap plasma density.
+2. The input parameters are passed with the `loki.input` file, from the same directory as the executable file.
+* The input file name is specified with a flag when running the code `... -i loki.input`.
 * Output path is specified with the `-o` flag, default value is "output/".
+3. Run the code as follows:
+```
+$ ./loki -i loki.input
+```
+or for MPI version:
+```
+$ mpiexec -n <# of cpu> loki -i loki.input
+```
 
 #### Example run:
 ```bash
