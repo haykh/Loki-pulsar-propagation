@@ -6,7 +6,7 @@ Theoretical basis for the program is given in the following papers <sup>[1](#myf
 
 ### Libraries description
 
-#####`lib/`:
+##### `lib/`:
 * `constants.h`: stores all the necessary constants within the `constants::` namespace;
 * `initialize.h`: some of the initialization routines used, such as finding the radiation point, reading input etc;
 * `process_functions.h`: all the physical functions involved;
@@ -14,7 +14,7 @@ Theoretical basis for the program is given in the following papers <sup>[1](#myf
 * `RHS.h`: the right-hand side of the ODE (both in `float` and `double`);
 * `pc_dens.h`: back integration routine to find the density on a polar cap for any given point on a ray trajectory.
 
-#####`lib/aux/`:
+##### `lib/aux/`:
 * `read_write.h`: reading and writing routines;
 * `functions.h`: custom functions for vector algebra;
 * `integrator.h`: custom 1d function integrator;
