@@ -103,7 +103,7 @@ $ git branch
 
 - Create new branch by doing
 ```bash
-$ git checkout -n <newbranchname>
+$ git checkout -b <newbranchname>
 ```
 
 - Adding updated files, committing and pushing to the repo:
