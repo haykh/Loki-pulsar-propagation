@@ -1,3 +1,8 @@
+#include <iostream>
+#include <string>
+#include "h5.h"
+#include "H5Cpp.h" 
+
 const H5std_string	FILE_NAME("fhrs.002");
 const H5std_string	DATASET_NAME0("bx");
 const H5std_string	DATASET_NAME1("by");
