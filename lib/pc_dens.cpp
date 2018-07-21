@@ -24,9 +24,21 @@
   double* pcdens::Rs;
   int pcdens::N;
 
-  std::vector <double> euler_3d (std::vector<double> vr0,
+  /*std::vector <double> euler_3d (std::vector<double> vr0,
                                 std::vector <double> (*vDeriv)(std::vector <double>, std::vector <double>),
                                 std::vector <double> arg2,
+                                double stepsize) {
+    double h = stepsize;
+
+    std::vector <double> vXYZ = vr0;
+    while (NORM(vXYZ) > 1.0)
+      vXYZ = SUM(vXYZ, TIMES(-h, vDeriv(vXYZ, arg2)));
+    return vXYZ;
+  }*/
+  
+  std::vector <double> euler_3d (std::vector<double> vr0,
+                                std::vector <double> (*vDeriv)(std::vector <double>, double),
+                                double arg2,
                                 double stepsize) {
     double h = stepsize;
 
@@ -77,7 +89,8 @@
 
     while (rup >= 0.0) {
       rups_.push_back(rup);
-      rup -= (rup > (Globals::RLC / 5.)) ? (Globals::RLC / 50.) : ((Globals::RLC / 50.) ? (Globals::RLC / 500.) : (Globals::RLC / 1000.));
+      rup -= 0.1;
+      //rup -= (rup > (Globals::RLC / 5.)) ? (Globals::RLC / 50.) : ((Globals::RLC / 50.) ? (Globals::RLC / 500.) : (Globals::RLC / 1000.));
     }
     rups_.push_back(0.0);
 
@@ -90,9 +103,11 @@
       print_progress(rup / Rmax, 26, "\t");
     	vm_ = vMoment(rup);
       pcdens::Rs[i] = rup;
-      pcdens::rps[i] = sin(ANGLE(euler_3d (vR(rup), vb_XYZ, vm_, euler_step), vm_));
+      //pcdens::rps[i] = sin(ANGLE(euler_3d (vR(rup), vb_XYZ, vm_, euler_step), vm_));
+      pcdens::rps[i] = sin(ANGLE(euler_3d (vR(rup), vb_XYZ, rup, euler_step), vm_));
+      cout << rup << " " << pcdens::rps[i] << endl;
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
 
     struct stat st = {0};
     std::string foldername = filename.substr (0, filename.find("/"));
