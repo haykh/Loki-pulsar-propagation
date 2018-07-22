@@ -35,7 +35,7 @@
       vXYZ = SUM(vXYZ, TIMES(-h, vDeriv(vXYZ, arg2)));
     return vXYZ;
   }*/
-  
+
   std::vector <double> euler_3d (std::vector<double> vr0,
                                 std::vector <double> (*vDeriv)(std::vector <double>, double),
                                 double arg2,
@@ -85,12 +85,9 @@
     std::vector <double> vm_, rups_;
     double euler_step = 0.01 * (Globals::RLC / 5000.0);
 
-    std::cout << "\tstepsize: " << euler_step << std::endl;
-
     while (rup >= 0.0) {
       rups_.push_back(rup);
-      rup -= 0.1;
-      //rup -= (rup > (Globals::RLC / 5.)) ? (Globals::RLC / 50.) : ((Globals::RLC / 50.) ? (Globals::RLC / 500.) : (Globals::RLC / 1000.));
+      rup -= (rup > (Globals::RLC / 5.)) ? (Globals::RLC / 50.) : ((rup > (Globals::RLC / 50.)) ? (Globals::RLC / 500.) : (Globals::RLC / 1000.));
     }
     rups_.push_back(0.0);
 
@@ -100,14 +97,16 @@
 
     for (int i = 0; i < pcdens::N; i++) {
       rup = rups_[pcdens::N - i - 1];
-      print_progress(rup / Rmax, 26, "\t");
+      #ifndef MPI
+        print_progress(rup / Rmax, 26, "\t");
+      #endif
     	vm_ = vMoment(rup);
       pcdens::Rs[i] = rup;
       //pcdens::rps[i] = sin(ANGLE(euler_3d (vR(rup), vb_XYZ, vm_, euler_step), vm_));
       pcdens::rps[i] = sin(ANGLE(euler_3d (vR(rup), vb_XYZ, rup, euler_step), vm_));
       cout << rup << " " << pcdens::rps[i] << endl;
     }
-    //std::cout << std::endl;
+    user_cout("");
 
     struct stat st = {0};
     std::string foldername = filename.substr (0, filename.find("/"));
@@ -147,10 +146,10 @@
   void rpFromR (double Rmax) {
     std::string fname;
     if (check_rpFromR(fname)) {
-      std::cout << "\t`rpFromR` file found. Reading..." << std::endl;
+      user_cout("\t`rpFromR` file found. Reading...");
       read_rpFromR (fname);
     } else {
-      std::cout << "\tNo `rpFromR` file found. Computing and writing..." << std::endl;
+      user_cout("\tNo `rpFromR` file found. Computing and writing...");
       fill_rpFromR (fname, Rmax);
     }
   }

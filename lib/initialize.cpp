@@ -132,38 +132,47 @@ void initialize(int argc, char* argv[]) {
   define_Globals();
 
   Globals::RUN_ID = read_from_file_str(Globals::input_name, "run_id", "my_run");
-  cout << "RUN_ID: " << Globals::RUN_ID << "\n\n";
-
-  cout << "\nR_esc: " << Globals::RESCAPE << endl;
-  cout << "R_A: " << Globals::ROMODE << endl;
-  cout << "R_lc: " << Globals::RLC << endl << endl;
 
   string MODE;
   if (Globals::mode == 0) MODE = "X-mode";
   else MODE = "O-mode";
+  
+  #ifdef MPI
+    if (mpi::rank == 0) {
+  #endif
+      cout << "RUN_ID: " << Globals::RUN_ID << endl;
+      cout << "\nR_esc: " << Globals::RESCAPE << endl;
+      cout << "R_A: " << Globals::ROMODE << endl;
+      cout << "R_lc: " << Globals::RLC << endl;
 
-  // Create output directory if doesn't exist
-  struct stat st = {0};
-  if (stat(Globals::out_path.c_str(), &st) == -1) {
-    mkdir(Globals::out_path.c_str(), 0700);
-  }
-
-  ofstream outputData(Globals::out_path + "/" + Globals::RUN_ID + ".dat");
-  outputData
-      << "alpha = " << Globals::alpha_deg
-      << "\nbeta = " << Globals::beta_deg
-      << "\n\nPeriod = " << Globals::Period
-      << "\nB12 = " << Globals::B12
-      << "\nfGHz = " << Globals::freqGHz
-      << "\n\nlambda = " << Globals::lambda
-      << "\ngamma0 = " << Globals::gamma0
-      << "\nf0 = " << Globals::f0
-      << "\nR_em = " << Globals::R_em
-      << "\n\n" + MODE
-      << "\nfr = " << Globals::fr
-      << "\nfphi = " << Globals::fphi
-      << "\n\n\nR_LC = " << Globals::RLC
-      << "\nR_escape = " << Globals::RESCAPE
-      << "\nR_A = " << Globals::ROMODE;
-  outputData.close();
+      // Create output directory if doesn't exist
+      struct stat st = {0};
+      if (stat(Globals::out_path.c_str(), &st) == -1) {
+        mkdir(Globals::out_path.c_str(), 0700);
+      }
+      ofstream outputData(Globals::out_path + "/" + Globals::RUN_ID + ".out");
+      outputData
+          << "alpha = " << Globals::alpha_deg
+          << "\nbeta = " << Globals::beta_deg
+          << "\n\nPeriod = " << Globals::Period
+          << "\nB12 = " << Globals::B12
+          << "\nfGHz = " << Globals::freqGHz
+          << "\n\nlambda = " << Globals::lambda
+          << "\ngamma0 = " << Globals::gamma0
+          << "\nf0 = " << Globals::f0
+          << "\nR_em = " << Globals::R_em
+          << "\n\n" + MODE
+          << "\nfr = " << Globals::fr
+          << "\nfphi = " << Globals::fphi
+          << "\n\n\nR_LC = " << Globals::RLC
+          << "\nR_escape = " << Globals::RESCAPE
+          << "\nR_A = " << Globals::ROMODE;
+      outputData.close();
+  #ifdef MPI
+    }
+  #endif
 }
+
+#ifdef MPI
+  int mpi::rank, mpi::size, mpi::offset;
+#endif

@@ -4,9 +4,8 @@
 #include <fstream>
 #include <string>
 
-#include "diffeqsolver.h"
+#include "rk4.h"
 #include "NRutil.h"
-#include "../process_functions.h"
 using namespace std;
 
 void rk4(double *y, double *dydx, int n, double x, double h, double *yout, void (*derivs)(double, double *, double *)) {
@@ -48,7 +47,7 @@ void rk4(double *y, double *dydx, int n, double x, double h, double *yout, void 
 #define ERRCON 1.89e-4
 #define HMAX 10.0
 
-#define MAXSTP 10000 // normally 10000
+#define MAXSTP 100000 // normally 10000
 #define TINY 1.0e-30
 
 void rkqc(
@@ -98,8 +97,6 @@ void rkqc(
           temp=fabs(ytemp[i]/yscal[i]);
           if (errmax < temp) errmax=temp;
       }
-//cout << "x:" << *x << "\t\tp.a.:" << y[0]*180.0/M_PI << "\t\tV:" << tanh(2*y[1]) << "\t\tbeta_b + delta:" << ( BetaB(*x) + delta(*x) ) * 180.0 / M_PI + 90.0 << "\n";
-//cout << "x:" << *x << "\t\tratio:" << ( Lambda(*x) / Q(*x) ) / ( Lambda(*x) * cos(2.0 * (y[0] - BetaB(*x) - delta(*x))) * sinh(2 * y[1]) ) << "\n";
       errmax /= eps;
       if (errmax <= 1.0)	{
           *hdid=h;
@@ -153,9 +150,6 @@ void odeint(
   y = new double [nvar];
   dydx = new double [nvar];
 
-  string path = "dats/test/";
-  ofstream plot(path + "betadelta_5.dat");
-
   x=x1;
   h=(x2 > x1) ? fabs(h1) : -fabs(h1);
   nok = nbad = kount = 0;
@@ -178,8 +172,6 @@ void odeint(
 
       (rkqc)(y, dydx, nvar, &x, h, eps, yscal, &hdid, &hnext, derivs);
 
-      plot << x << " " << BetaB(x) + delta(x) << " " << y[0] << " " << tanh(2 * y[1]) << "\n";
-
       if (hdid == h) nok++; else nbad++;
       if ((x-x2)*(x2-x1) >= 0.0) {
           for (i=0; i<nvar; i++) {
@@ -189,7 +181,6 @@ void odeint(
               xp[++kount]=x;
               for (i=1; i<=nvar; i++) yp[i][kount]=y[i];
           }
-          plot.close();
           return;
       }
       if (fabs(hnext) <= hmin) {
@@ -199,7 +190,6 @@ void odeint(
       h=hnext;
   }
   cout << "Too many steps in routine ODEINT\n";
-  plot.close();
   delete [] yscal;
   delete [] y;
   delete [] dydx;

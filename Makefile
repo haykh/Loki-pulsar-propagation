@@ -2,8 +2,9 @@ FILES = src/*.cpp lib/*.cpp lib/aux/*.cpp
 
 CC = g++
 CFLAGS = -std=c++14
+MPICC = mpic++ -DMPI
 
-FLAGS = -DINTBACK
+FLAGS = #-DINTBACK
 
 all:
 	mkdir -p bin
@@ -11,3 +12,7 @@ all:
 
 clean:
 	rm bin/loki
+
+mpi:
+	mkdir -p bin
+	${MPICC} ${CFLAGS} ${FLAGS} ${FILES} -o bin/loki

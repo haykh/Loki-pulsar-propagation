@@ -5,17 +5,39 @@ Theoretical basis for the program is given in the following papers <sup>[1](#myf
 <sup>[2](#myfootnote2)</sup> <sup>[3](#myfootnote3)</sup>.
 
 ### Libraries description
-`lib` folder contains all the necessary libraries.
-* `Nrutil.h` and `diffeqsolver.h` are from "Numerical Recipes in C" <sup>[4](#myfootnote4)</sup> textbook and contain everything to solve nonlinear ODE with rk4 routine.
-* `integrator.h` is a custom one dimensional function integrator. `functions.h` contains custom functions for vector algebra.
-* All the physical functions involved are in `process_functions.h` and the right-hand side of the ODE is written in `RHS.h`. `initialize.h` is to store some of the initialization routines used, such as finding the radiation point.
-* `constants.h` is to store all the necessary constants within the `constants::` namespace.
 
-### Running
-* Compile with `make all` in the root directory, the executable is generated in the `bin/` directory.
-* The input parameters are passed with the `loki.input` file, from the same directory as the executable file.
-* The input file name is specified with a flag when running the code `./loki -i loki.input`.
+##### `lib/`:
+* `constants.h`: stores all the necessary constants within the `constants::` namespace;
+* `initialize.h`: some of the initialization routines used, such as finding the radiation point, reading input etc;
+* `process_functions.h`: all the physical functions involved;
+* `b_field.h`: functions to find the magnetic field for a given point;
+* `RHS.h`: the right-hand side of the ODE (both in `float` and `double`);
+* `pc_dens.h`: back integration routine to find the density on a polar cap for any given point on a ray trajectory.
+
+##### `lib/aux/`:
+* `read_write.h`: reading and writing routines;
+* `functions.h`: custom functions for vector algebra;
+* `integrator.h`: custom 1d function integrator;
+* `NRutil.h`: all auxiliary structures and interpolation function;
+* `dsolve.h`: some Runge-Kutta solvers (partly from "Numerical Recipes in C" <sup>[4](#myfootnote4)</sup> textbook and from [here](https://people.sc.fsu.edu/~jburkardt/c_src/)) to solve nonlinear ODE with rk4, rkf45 and rk8 routines;
+* `rk4.h`, `rkf45.h`: rk routines.
+
+
+### Compiling and running
+1. Compile with `make all` or `make mpi` in the root directory, the executable is generated in the `bin/` directory.
+* `make mpi` compiles an MPI version of the code with a flag `MPI`.
+* There is a custom flag `INTBACK` that enables back integration to find the polar cap plasma density.
+2. The input parameters are passed with the `loki.input` file, from the same directory as the executable file.
+* The input file name is specified with a flag when running the code `... -i loki.input`.
 * Output path is specified with the `-o` flag, default value is "output/".
+3. Run the code as follows:
+```bash
+$ ./loki -i loki.input
+```
+or for MPI version:
+```bash
+$ mpiexec -n <number of CPUs> loki -i loki.input
+```
 
 #### Example run:
 ```bash
@@ -23,11 +45,31 @@ $ make all
 $ cd bin
 $ ./loki -i loki.input -o my_output
 ```
+or
+```bash
+$ make mpi
+$ cd bin
+$ mpiexec -n 16 loki -i loki.input -o my_mpi_output
+```
+
+### Visualization
+
+For a non-MPI run the output is written in a standard `utf-8` encoding and can be directly read in python as follows:
+```python
+import numpy as np
+data = np.loadtxt("<output_file>")
+```
+
+In MPI run the file is written in a binary format and should be treated differently. `vis/` folder in this repository contains a library to read the binary data. Import the `loki` module (`loki.py` file should be in the same directory as the python file or jupyter notebook) and read the data as follows:
+```python
+import loki
+data = loki.loki_read("<output_file>")
+```
 
 ### Things to do
-- Write density routine for any given ___B___-field.
 - Make initial radiation point for any given magnetic field (right now only takes dipole field, which is not bad, since we start close to the star).
-- Fix `Step size too small in routine RKQC` issue for high density plasma.
+- Fix `Step size too small in routine RKQC` issue and `nan`-s for high density plasma.
+- Read `hdf5` __b__-field data.
 
 ### Literature
 <a name="myfootnote1">1</a>: _A.S. Andrianov, V.S. Beskin_, [Limiting polarization effect—a key link in investigating the mean profiles of radio pulsars](https://link.springer.com/article/10.1134/S1063773710040031) __(2010)__
@@ -37,6 +79,8 @@ $ ./loki -i loki.input -o my_output
 <a name="myfootnote3">3</a>: _H. Hakobyan, V. Beskin, A. Philippov_, [On the mean profiles of radio pulsars II: Reconstruction of complex pulsar light-curves and other new propagation effects](https://arxiv.org/abs/1704.08743) __(2017)__
 
 <a name="myfootnote4">4</a>: _Brian P. Flannery, Saul Teukolsky, William H. Press, and William T. Vetterling_, [Numerical Recipes in C: The Art of Scientific Computing](http://www2.units.it/ipl/students_area/imm2/files/Numerical_Recipes.pdf)
+
+---
 
 ### Memo for git
 
@@ -59,7 +103,7 @@ $ git branch
 
 - Create new branch by doing
 ```bash
-$ git checkout -n <newbranchname>
+$ git checkout -b <newbranchname>
 ```
 
 - Adding updated files, committing and pushing to the repo:
@@ -79,7 +123,9 @@ $ git checkout branch_A # <- switch back to branch_A
 $ git stash apply # <- get your stashed files back on branch_A
 ```
 
-> BONUS. To see the active branch in your terminal with a highlighted color, you can add this to your `~/.bash_profile` file, save and then restart your terminal:
+---
+
+__BONUS.__ To see the active branch in your terminal with a highlighted color, you can add this to your `~/.bash_profile` file, save and then restart your terminal:
 ```bash
 parse_git_branch() {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1) /'
