@@ -1,15 +1,14 @@
+#include <math.h>
+#include <vector>
 #include <iostream>
 #include <string>
 #include "H5Cpp.h"
 #include "aux/read_write.h"
 #include "b_field.h"
 
-using std::cout;
-using std::endl;
+// using std::cout;
+// using std::endl;
 using namespace H5;
-
-#include <math.h>
-#include <vector>
 
 #include "initialize.h"
 #include "constants.h"

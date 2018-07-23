@@ -103,6 +103,7 @@
     	vm_ = vMoment(rup);
       pcdens::Rs[i] = rup;
       //pcdens::rps[i] = sin(ANGLE(euler_3d (vR(rup), vb_XYZ, vm_, euler_step), vm_));
+      // CHANGE THIS:
       pcdens::rps[i] = sin(ANGLE(euler_3d (vR(rup), vb_XYZ, rup, euler_step), vm_));
       cout << rup << " " << pcdens::rps[i] << endl;
     }

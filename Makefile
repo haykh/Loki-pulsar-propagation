@@ -1,6 +1,6 @@
 FILES = src/*.cpp lib/*.cpp lib/aux/*.cpp
 
-CC = g++
+CC = h5c++
 CFLAGS = -std=c++14
 MPICC = mpic++ -DMPI
 
