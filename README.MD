@@ -24,7 +24,7 @@ Theoretical basis for the program is given in the following papers <sup>[1](#myf
 
 
 ### Compiling and running
-0. Configure the compiler by running `python configure -<flag1> -<flag2> ...`. See below for the available flags.
+0. Configure the compiler by running `python configure.py -<flag1> -<flag2> ...`. See below the available flags.
 1. Compile with `make all` in the root directory, the executable is generated in the `bin/` directory.
 2. The input parameters are passed with the `loki.input` file, from the same directory as the executable file.
 * The input file name is specified with a flag when running the code `... -i loki.input`.
