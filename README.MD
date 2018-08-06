@@ -53,7 +53,8 @@ $ ./loki -i loki.input -o my_output
 ```
 or
 ```bash
-$ make configure.py -mpi -intback -findnan
+$ python configure.py -mpi -intback -findnan
+$ make all
 $ cd bin
 $ mpiexec -n 16 loki -i loki.input -o my_mpi_output
 ```
