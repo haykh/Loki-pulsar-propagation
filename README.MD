@@ -4,7 +4,7 @@
 Theoretical basis for the program is given in the following papers <sup>[1](#myfootnote1)</sup>
 <sup>[2](#myfootnote2)</sup> <sup>[3](#myfootnote3)</sup>.
 
-![Loki](Loki_lo.jpg)
+[![Loki](Loki_lo.jpg)](#)
 
 ### Libraries description
 
