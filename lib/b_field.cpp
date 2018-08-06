@@ -5,7 +5,7 @@
 #include "constants.h"
 #include "aux/functions.h"
 #include "process_functions.h"
-#include "NRutil.h"
+#include "aux/NRutil.h"
 
 
 std::vector <double> vBdipole_XYZ(std::vector <double> r, std::vector <double> m){
@@ -64,21 +64,4 @@ std::vector <double> vB (double R) {
 }
 std::vector <double> vb (double R) {
   return NORMALIZE(vB(R));
-}
-
-std::vector <double> vB_XYZ_pic(std::vector <double> r) { //need to rotate
-	std::vector <double> b(3);
-	double def = 1.0; //?
-	Point3	p;
-    p.x = 25.0*r[0]+128.0;
-    p.y = 25.0*r[1]+128.0;
-    p.z = 25.0*r[2]+128.0;
-	b[0] = trilinear(&p, bx, DIM0, DIM1, DIM2, def); //need to share bx,by,bz
-	b[1] = trilinear(&p, by, DIM0, DIM1, DIM2, def);
-	b[2] = trilinear(&p, bz, DIM0, DIM1, DIM2, def);
-	return b;
-}
-
-std::vector <double> vB_pic(double R) {
-	return vB_XYZ_pic(vR(R));
 }
