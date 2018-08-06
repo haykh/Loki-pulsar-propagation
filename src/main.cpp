@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
 
       // Initial values & limits />
       double x1, x2, dep_vars[2];
-      x1 = 0.1;
+      x1 = 10.0;
       x2 = 2. * Globals::RESCAPE;
 
       #ifdef INTBACK
@@ -126,11 +126,13 @@ int main(int argc, char* argv[]) {
         buffer1[buff_step+3] = PA;
         buff_step += 4;
       #endif
-      // if (isnan(VV) || isnan(PA)) {
-      //   msg << "ERROR: `nan` found in VV or PA: " << VV << " " << PA << "\n";
-      //   msg << "\tPHI0 " << phi_t << "\n";
-      //   throw_error(msg.str());
-      // }
+      #ifdef FINDNAN
+        if (isnan(VV) || isnan(PA)) {
+          msg << "ERROR: `nan` found in VV or PA: " << VV << " " << PA << "\n";
+          msg << "\tPHI0 " << phi_t << "\n";
+          throw_error(msg.str());
+        }
+      #endif
 
       #ifdef INTBACK
         delete[] pcdens::rps;
