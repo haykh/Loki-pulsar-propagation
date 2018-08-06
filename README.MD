@@ -37,7 +37,7 @@ or for MPI version:
 ```bash
 $ mpiexec -n <number of CPUs> loki -i loki.input
 ```
-#### Available flags
+#### Available flags for `configure.py`
 * `-mpi`: MPI version of the code;
 * `-intback`: enable backwards integration to find the polar cap density;
 * `-findnan`: exit when find NaN-s;
