@@ -12,7 +12,6 @@ double Lambda (double R);
 double dtau (double R);
 double psi_m (double R);
 vector <double> vR (double R);
-double gFunc (double R);
 
 vector <double> vMoment (double R);
 vector <double> vUdr (double R);

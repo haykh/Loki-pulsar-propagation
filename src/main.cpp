@@ -9,27 +9,24 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <math.h>
 
 using namespace std;
 
 #include "../lib/constants.h"
-#include "../lib/read_write.h"
+#include "../lib/aux/read_write.h"
+#include "../lib/b_field.h"
 
-#include "../lib/functions.h"
+#include "../lib/aux/functions.h"
 #include "../lib/process_functions.h"
+#include "../lib/pc_dens.h"
 #include "../lib/initialize.h"
 
-#include "../lib/integrator.h"
+#include "../lib/aux/integrator.h"
 #include "../lib/RHS.h"
-
-/*
-  Default libraries
-*/
-#include "../lib/diffeqsolver.h"
+#include "../lib/aux/diffeqsolver.h"
 
 void displayVector (vector <double> a) {
-    cout << endl << a[0] << endl << a[1] << endl << a[2] << endl;
+  cout << endl << a[0] << endl << a[1] << endl << a[2] << endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -38,8 +35,6 @@ int main(int argc, char* argv[]) {
   ofstream output0(Globals::out_path + "/" + Globals::RUN_ID + "_0.dat");
   ofstream output1(Globals::out_path + "/" + Globals::RUN_ID + "_1.dat");
 
-  // SIMULATION STARTS HERE />
-
   double phi_t_start = read_from_file(Globals::input_name, "phi_start");
   double phi_t_end = read_from_file(Globals::input_name, "phi_end");
   double phi_t_step = read_from_file(Globals::input_name, "phi_step");
@@ -47,12 +42,19 @@ int main(int argc, char* argv[]) {
     cout << "PHI: " << phi_t << endl;
     Globals::PHI0 = phi_t * constants::PI / 180.0;
     findInitPoints (Globals::PHI0);
-
+	ReadFile();
+	PrintField();
+    // Initial values & limits />
     double x1, x2, dep_vars[2];
-    x1 = 0.0;
+    x1 = 1.0;
     x2 = 1.5 * Globals::RESCAPE;
 
-    // Initial values />
+    #ifdef INTBACK
+      cout << "Calculating r_perp(R) array...\n";
+      rpFromR (Globals::RLC);
+      cout << "r_perp(R) array done.\n";
+    #endif
+
     if (Globals::mode == 0) { // X-mode
       dep_vars[0] = BetaB(x1) + delta(x1) + constants::PI / 2.0;
       dep_vars[1] = Arcsinh(1.0 / Q(x1)) / 2.0;
@@ -60,7 +62,7 @@ int main(int argc, char* argv[]) {
       dep_vars[0] = BetaB(x1) + delta(x1);
       dep_vars[1] = Arcsinh(-1.0 / Q(x1)) / 2.0;
     }
-    // </ Initial values
+    // </ Initial values & limits
 
     double PA = dep_vars[0] * 180 / constants::PI;
     double tau = constants::PI * constants::R_star * integrate(dtau, x1, Globals::RLC) / (constants::c * Globals::omega);
@@ -70,15 +72,20 @@ int main(int argc, char* argv[]) {
     double VV = II * tanh(2.0 * dep_vars[1]);
     output0 << phi_t << " " << II0 << " " << VV << " " << PA << endl;
 
-    int nvar = 2, nok = 0, nbad = 0;
-    double deps = 1.0, h1 = 1.0e-14, hmin = 1.0e-15;
-    odeint(dep_vars, nvar, x1, x2, deps, h1, hmin, nok, nbad, RHS);
+    cout << "Solving ODE...\n";
+    odeint(dep_vars, 2, x1, x2, 1.0, 1e-14, 1e-15, 0, 0, RHS);
+    cout << "ODE done.\n";
 
     VV = II * tanh(2.0 * dep_vars[1]);
     PA = dep_vars[0] * 180.0 / constants::PI;
 
-    // cout << "\tI: " << II << "\n\tV: " << VV << "\n\tPA: " << -PA << endl << endl;
+    cout << "\tI: " << II << "\n\tV: " << VV << "\n\tPA: " << -PA << endl << endl;
     output1 << phi_t << " " << II << " " << VV << " " << -PA << endl;
+
+    #ifdef INTBACK
+      delete[] pcdens::rps;
+      delete[] pcdens::Rs;
+    #endif
   }
   output0.close();
   output1.close();

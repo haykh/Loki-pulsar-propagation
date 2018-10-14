@@ -1,8 +1,9 @@
 #include <math.h>
 #include <vector>
+
+#include "aux/read_write.h"
 #include "RHS.h"
 #include "constants.h"
-#include "read_write.h"
 #include "process_functions.h"
 #include "initialize.h"
 

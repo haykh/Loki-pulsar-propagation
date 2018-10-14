@@ -10,8 +10,8 @@ namespace Globals {
         alpha_deg, beta_deg, alpha, beta, dzeta,
         PHI0,
         R_em, RLC, RESCAPE, ROMODE;
-  extern vector <double> vOmega;
-  extern string RUN_ID, input_name, out_path;
+  extern std::vector <double> vOmega;
+  extern std::string RUN_ID, input_name, out_path;
 }
 
 void findInitPoints (double PHI0);
