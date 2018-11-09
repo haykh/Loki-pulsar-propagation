@@ -107,7 +107,7 @@ double Ne (double R) {
 }
 
 double omegaB (double R) {
-  return -constants::e * NORM(vB(R)) * (Globals::B0 / pow(NORM(vR(R)), 3)) / (constants::me * constants::c);
+	return -constants::e * NORM(vB(R)) * (Globals::B0 / pow(NORM(vR(R)), 3)) / (constants::me * constants::c);
 }
 double omegaW (double R) {
   double vx = vUdr(R) [0];
@@ -117,7 +117,7 @@ double omegaW (double R) {
   return Globals::omega * (1 - sinth * vx - costh * vz);
 }
 double omegaP (double R) {
-  return sqrt(4 * constants::PI * constants::e * constants::e * fabs(Ne(R)) / constants::me);
+	return sqrt(4 * constants::PI * constants::e * constants::e * fabs(Ne(R)) / constants::me);
 }
 
 double Q (double R) {
@@ -130,7 +130,7 @@ double Q (double R) {
 }
 
 double fDist (double gamma) {
-  return ((6.0 * Globals::gamma0) / (pow(2.0, 1.0/6.0) * constants::PI)) * (pow(gamma, 4) / (2.0 * pow(gamma, 6) + pow(Globals::gamma0, 6)));
+	return ((6.0 * Globals::gamma0) / (pow(2.0, 1.0/6.0) * constants::PI)) * (pow(gamma, 4) / (2.0 * pow(gamma, 6) + pow(Globals::gamma0, 6)));
 }
 
 double gammaU (double R) {

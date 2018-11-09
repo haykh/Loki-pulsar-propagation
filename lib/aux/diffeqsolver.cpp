@@ -9,6 +9,8 @@
 #include "../process_functions.h"
 using namespace std;
 
+ofstream plot("V.dat");
+
 void rk4(double *y, double *dydx, int n, double x, double h, double *yout, void (*derivs)(double, double *, double *)) {
   int i;
   double xh,hh,h6;
@@ -98,6 +100,8 @@ void rkqc(
           temp=fabs(ytemp[i]/yscal[i]);
           if (errmax < temp) errmax=temp;
       }
+      
+       plot << *x << " " << tanh(2*y[0]) << "\n";
 //cout << "x:" << *x << "\t\tp.a.:" << y[0]*180.0/M_PI << "\t\tV:" << tanh(2*y[1]) << "\t\tbeta_b + delta:" << ( BetaB(*x) + delta(*x) ) * 180.0 / M_PI + 90.0 << "\n";
 //cout << "x:" << *x << "\t\tratio:" << ( Lambda(*x) / Q(*x) ) / ( Lambda(*x) * cos(2.0 * (y[0] - BetaB(*x) - delta(*x))) * sinh(2 * y[1]) ) << "\n";
       errmax /= eps;

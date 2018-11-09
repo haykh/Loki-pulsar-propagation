@@ -43,15 +43,16 @@ int main(int argc, char* argv[]) {
     Globals::PHI0 = phi_t * constants::PI / 180.0;
     findInitPoints (Globals::PHI0);
 	ReadFile();
-	PrintField();
+	bnorm();
+	//PrintField();
     // Initial values & limits />
     double x1, x2, dep_vars[2];
-    x1 = 1.0;
-    x2 = 1.5 * Globals::RESCAPE;
+    x1 = 0.0;
+    x2 = 1.49 * Globals::RESCAPE;
 
     #ifdef INTBACK
       cout << "Calculating r_perp(R) array...\n";
-      rpFromR (Globals::RLC);
+      rpFromR (1.5*Globals::RESCAPE);
       cout << "r_perp(R) array done.\n";
     #endif
 
@@ -65,9 +66,10 @@ int main(int argc, char* argv[]) {
     // </ Initial values & limits
 
     double PA = dep_vars[0] * 180 / constants::PI;
-    double tau = constants::PI * constants::R_star * integrate(dtau, x1, Globals::RLC) / (constants::c * Globals::omega);
+    double tau = constants::PI * constants::R_star * integrate(dtau, x1, x2) / (constants::c * x2);
     double II0 = gFunc(x1);
     double II = II0 * exp (-tau);
+    //cout << tau << " " << exp(-tau) << "\n";
 
     double VV = II * tanh(2.0 * dep_vars[1]);
     output0 << phi_t << " " << II0 << " " << VV << " " << PA << endl;

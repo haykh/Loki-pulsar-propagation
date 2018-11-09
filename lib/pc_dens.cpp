@@ -20,7 +20,7 @@
 
 #ifdef INTBACK
 
-ofstream plot("r_perp.dat");
+//ofstream plot("r_perp.dat");
 
   double* pcdens::rps;
   double* pcdens::rps_dipole;
@@ -86,6 +86,7 @@ ofstream plot("r_perp.dat");
   void fill_rpFromR (string filename, double Rmax) {
   	double rup = Rmax;
     std::vector <double> vm_, rups_;
+    double r_fix = 0.0;
     double euler_step = 0.01 * (Globals::RLC / 5000.0);
 
     std::cout << "\tstepsize: " << euler_step << std::endl;
@@ -106,13 +107,13 @@ ofstream plot("r_perp.dat");
       rup = rups_[pcdens::N - i - 1];
       print_progress(rup / Rmax, 26, "\t");
     	vm_ = vMoment(rup);
-    	double r_fix = rup;
+    	r_fix = rup;
       pcdens::Rs[i] = rup;
       pcdens::rps_dipole[i] = sin(ANGLE(euler_3d_dipole (vR(rup), vb_dipole, vm_, euler_step), vm_));
       //cout << vb_XYZ(vR(rup), rup)[0] << " " << vb_XYZ(vR(rup), rup)[1] << " " << vb_XYZ(vR(rup), rup)[2]<< "\n"; 
       pcdens::rps[i] = sin(ANGLE(euler_3d (vR(rup), vb_XYZ, r_fix, euler_step), vm_));
       
-      plot << rup << " " << pcdens::rps[i] << " " << pcdens::rps_dipole[i] << " " << sin(ANGLE(vR(rup),vMoment(rup)))/sqrt(NORM(vR(rup))) << endl;
+      //plot << rup << " " << pcdens::rps[i] << " " << pcdens::rps_dipole[i] << endl; //sin(ANGLE(vR(rup),vMoment(rup)))/sqrt(NORM(vR(rup))) << endl;
     }
     //std::cout << std::endl;
 
